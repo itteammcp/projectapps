@@ -129,7 +129,7 @@
 
   h1.doc-title {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(32px, 5vw, 56px);
+    font-size: clamp(28px, 4vw, 42px);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -254,7 +254,7 @@
 
   h2.section-title {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(22px, 3vw, 30px);
+    font-size: clamp(20px, 3vw, 24px);
     font-weight: 700;
     line-height: 1.2;
     color: var(--text);
@@ -262,7 +262,7 @@
 
   h3.sub-title {
     font-family: 'Syne', sans-serif;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--text);
     margin: 28px 0 14px;
@@ -1177,7 +1177,7 @@
 }
 .arch-card-title {
   font-family: 'Syne', sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   margin-bottom: 6px;
   color: var(--text);
