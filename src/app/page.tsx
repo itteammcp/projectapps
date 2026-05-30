@@ -1,10 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
   useEffect(() => {
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme') as "light" | "dark" | null;
+    const initialTheme = savedTheme || "dark";
+    setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+
     const cards = document.querySelectorAll<HTMLElement>('.glass-card');
     
     // Add subtle entrance animation
@@ -42,8 +50,19 @@ export default function Home() {
     };
   }, []);
 
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+
   return (
     <>
+      <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Toggle theme">
+        <span>{theme === "light" ? "🌙" : "☀️"}</span>
+        <span>{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
+      </button>
       <div className="glass-container">
         <header className="hero">
           <h1>MCP Project Apps</h1>
