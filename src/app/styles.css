@@ -473,26 +473,26 @@
   /* ─── CHECKLIST ─────────────────────────────────── */
   ul.checklist {
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
     margin: 12px 0;
+    padding: 0;
   }
 
   ul.checklist li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    position: relative;
+    padding-left: 20px;
     color: var(--text-muted);
     font-size: 14px;
+    margin-bottom: 10px;
+    line-height: 1.6;
   }
 
   ul.checklist li::before {
     content: '▸';
+    position: absolute;
+    left: 0;
+    top: 2px;
     color: var(--accent2);
-    font-size: 12px;
-    margin-top: 4px;
-    flex-shrink: 0;
+    font-size: 14px;
   }
 
   /* ─── TECH STACK PILLS ──────────────────────────── */
