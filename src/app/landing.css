@@ -95,12 +95,12 @@ h1, h2, .subtitle {
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
     border-radius: 24px;
-    padding: 4rem;
+    padding: 2rem;
     box-shadow: var(--glass-shadow);
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 2rem;
     margin: 2rem 0;
 }
 
@@ -109,7 +109,7 @@ h1, h2, .subtitle {
 }
 
 .hero h1 {
-    font-size: 4rem;
+    font-size: 3rem;
     font-weight: 800;
     background: linear-gradient(135deg, #a5b4fc, #fbcfe8);
     -webkit-background-clip: text;
@@ -133,7 +133,7 @@ h1, h2, .subtitle {
 
 .docs-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: 1fr;
     gap: 2rem;
 }
 
@@ -198,15 +198,15 @@ footer {
     margin-top: 1rem;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
     .glass-container {
-        padding: 2rem;
-        gap: 2rem;
+        padding: 4rem;
+        gap: 4rem;
     }
     .hero h1 {
-        font-size: 3rem;
+        font-size: 4rem;
     }
     .docs-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
 }
