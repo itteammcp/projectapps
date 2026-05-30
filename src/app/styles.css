@@ -819,6 +819,10 @@
     .toc-list {
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     }
+
+    .arch-grid-dashboard {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
   }
 
   @media print {
@@ -1141,7 +1145,7 @@
 /* Custom architecture diagram styles */
 .arch-grid-dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: 1fr;
   gap: 16px;
   margin-top: 24px;
 }
