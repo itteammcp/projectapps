@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRS — Warehouse Management System</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <script src="../assets/script.js" defer></script>
+</head>
+
+<body>
+  <a href="index.html"
+    style="position: fixed; bottom: 24px; left: 24px; z-index: 9999; padding: 10px 20px; background: #6366f1; color: white; border-radius: 8px; text-decoration: none; font-family: 'Syne', sans-serif; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">&larr;
+    Back</a>
+  <div class="page-wrap">
+    <button id="theme-toggle-btn" class="theme-toggle">
+      <span id="theme-icon">☀️</span>
+      <span id="theme-text">Light Mode</span>
+    </button>
+
+    <!-- HEADER -->
+    <header class="doc-header">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <button id="toc-burger" class="burger-btn" aria-label="Toggle Table of Contents">
+          ☰
+        </button>
+        <div class="header-badge" style="margin-bottom: 0;">Software Requirements Specification</div>
+      </div>
+      <h1 class="doc-title">TALOS Warehouse<br />Management System</h1>
+      <p class="doc-subtitle">Dokumen SRS ini menjabarkan spesifikasi teknis, kebutuhan fungsional, perilaku sistem (behavior), aturan aplikasi (business rules), serta validasi untuk Talos WMS.</p>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-label">Versi Dokumen</div>
+          <div class="meta-value">v1.0.0</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Tanggal</div>
+          <div class="meta-value">Mei 2025</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Status</div>
+          <div class="meta-value accent">Final Draft</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Frontend</div>
+          <div class="meta-value">TypeScript</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Backend</div>
+          <div class="meta-value">Go (Golang)</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Integrasi</div>
+          <div class="meta-value">Accurate Online</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- TOC -->
+    <div id="toc-overlay" class="toc-overlay"></div>
+    <nav class="toc" id="toc-drawer">
+      <div class="toc-title">// Daftar Isi</div>
+      <ul class="toc-list">
+        <li><a href="#s1"><span class="toc-num">01</span> Pendahuluan</a></li>
+        <li><a href="#s2"><span class="toc-num">02</span> Deskripsi Umum</a></li>
+        <li><a href="#s3"><span class="toc-num">03</span> Kebutuhan Fungsional & Aturan</a></li>
+        <li><a href="#s4"><span class="toc-num">04</span> Antarmuka Eksternal</a></li>
+        <li><a href="#s5"><span class="toc-num">05</span> Kebutuhan Non-Fungsional</a></li>
+      </ul>
+    </nav>
+
+    <!-- SECTION 1 -->
+    <section class="section collapsed" id="s1">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Pendahuluan</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">1.1 Tujuan Dokumen</h3>
+        <p>Dokumen Software Requirements Specification (SRS) ini bertujuan untuk menjabarkan spesifikasi teknis, kebutuhan fungsional, perilaku sistem (behavior), aturan aplikasi (business rules), serta validasi yang harus diimplementasikan pada <strong>TALOS Warehouse Management System (WMS)</strong>. Dokumen ini menjadi acuan utama bagi tim pengembang perangkat lunak, QA, dan pemangku kepentingan berdasarkan referensi dari Product Requirements Document (PRD).</p>
+        
+        <h3 class="sub-title">1.2 Ruang Lingkup Sistem</h3>
+        <p>TALOS WMS adalah sistem manajemen gudang terpadu yang memiliki kapabilitas:</p>
+        <ul class="checklist">
+          <li>Manajemen Inbound, Outbound, Transfer, dan Stock Adjustment.</li>
+          <li>Penggunaan <strong>Barcode Serialized</strong> untuk penelusuran histori setiap unit barang.</li>
+          <li>Visualisasi <strong>Layout Gudang 2D</strong> yang interaktif.</li>
+          <li>Mendukung penyimpanan <strong>Multi-Level</strong> (palet, dus, satuan) dengan struktur rack dan bin management.</li>
+          <li>Proses <strong>Assembly dan Disassembly</strong> berdasarkan Bill of Materials (BOM).</li>
+          <li><strong>Stock Opname</strong> (cycle count & full count) dengan rekonsiliasi otomatis.</li>
+          <li>Terhubung secara sinkron (dua arah) dengan <strong>Accurate Online</strong>.</li>
+          <li>Pelaporan operasional dan analitik performa gudang.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section class="section collapsed" id="s2">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Deskripsi Umum</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">2.1 Karakteristik Pengguna (Persona)</h3>
+        <div class="role-grid">
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(79,128,255,0.15);">🏭</div>
+            <div class="role-name">Orang Gudang</div>
+            <div class="role-desc">Melakukan transaksi fisik, membutuhkan UI yang responsif dan mobile-friendly (tombol besar, scanning mudah, input efisien).</div>
+          </div>
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(56,240,192,0.12);">🗂️</div>
+            <div class="role-name">Admin Spare Part</div>
+            <div class="role-desc">Melakukan manajemen master data, konfigurasi BOM, manajemen layout gudang, pengaturan master lokasi, serta penanganan stock opname.</div>
+          </div>
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(245,166,35,0.12);">📊</div>
+            <div class="role-name">Parts Analyst</div>
+            <div class="role-desc">Membutuhkan laporan lengkap, analitik historis, performa KPI, dan dashboard operasional.</div>
+          </div>
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(167,139,250,0.15);">🔐</div>
+            <div class="role-name">Super Admin / IT</div>
+            <div class="role-desc">Memegang kontrol akses tertinggi, konfigurasi integrasi Accurate Online, memonitor log audit, dan resolusi konflik sinkronisasi.</div>
+          </div>
+        </div>
+
+        <h3 class="sub-title">2.2 Lingkungan Operasi & Tech Stack</h3>
+        <div class="feature-grid">
+          <div class="feature-card blue">
+            <span class="card-icon">💻</span>
+            <div class="card-title">Frontend</div>
+            <p class="card-desc">Web browser modern di desktop, tablet, dan smartphone. Dibangun menggunakan Next.js (React), TypeScript, TailwindCSS, Zustand, Konva.js (Canvas 2D), dan react-zxing (Barcode Scanner).</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">⚙️</span>
+            <div class="card-title">Backend</div>
+            <p class="card-desc">Layanan API berbasis Go (Golang) v1.22+ menggunakan framework Gin/Echo, dengan basis data PostgreSQL. Message Queue menggunakan RabbitMQ dan Redis untuk cache. Autentikasi via JWT.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">🔄</span>
+            <div class="card-title">Integrasi</div>
+            <p class="card-desc">API Accurate Online v1 (REST) via autentikasi OAuth2 dan Webhook Endpoint.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section class="section collapsed" id="s3">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Kebutuhan Fungsional & Aturan Aplikasi</h2>
+      </div>
+      <div class="content">
+        <p>Bagian ini menjelaskan secara detail spesifikasi interaksi sistem dengan penekanan pada logika, perilaku, dan aturan validasi data.</p>
+
+        <!-- 3.1 -->
+        <h3 class="sub-title">3.1 Manajemen Barcode Serialized</h3>
+        <h4 class="sub-sub-title">Behavior & Aturan</h4>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Keunikan SN</td>
+              <td>:</td>
+              <td>Setiap unit satuan terkecil harus memiliki Serial Number (SN) yang bersifat <strong>unik secara global</strong> di dalam sistem.</td>
+            </tr>
+            <tr>
+              <td>Siklus Hidup</td>
+              <td>:</td>
+              <td>Sistem mengawasi siklus hidup SN: dari penerimaan (Available) → mutasi (In-Transit / Available) → pengeluaran/assembly (Consumed/Disposed).</td>
+            </tr>
+            <tr>
+              <td>Format SN</td>
+              <td>:</td>
+              <td><code>[KodeGudang]-[KodeBarang]-[YYYYMMDD]-[SequenceUrut]</code>.</td>
+            </tr>
+            <tr>
+              <td>Scan & Mapping</td>
+              <td>:</td>
+              <td>Jika perusahaan menerima barcode pabrik, fitur <em>Scan & Mapping</em> dapat mendaftarkan SN bawaan pabrik selama nilainya unik.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn">
+          <span class="callout-icon">🛡️</span>
+          <div><strong>Validasi:</strong><br/>- Pembuatan/Penerimaan ganda: Jika di-scan SN yang sudah ada dengan status masih ada di gudang, munculkan error blokir: <em>"Serial Number [SN] sudah tercatat aktif di sistem."</em><br/>- Scan pengeluaran: Sistem memvalidasi apakah SN sedang diblokir (Hold) atau di-reserve (sudah masuk ke keranjang pesanan/WO lain).</div>
+        </div>
+
+        <!-- 3.2 -->
+        <h3 class="sub-title">3.2 Racking, Bin, & Multilevel Storage</h3>
+        <h4 class="sub-sub-title">Behavior & Aturan</h4>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Manipulasi Lokasi</td>
+              <td>:</td>
+              <td>Struktur lokasi tidak boleh dihapus atau diubah dimensinya secara drastis jika masih berisi barang aktif.</td>
+            </tr>
+            <tr>
+              <td>Kapasitas Bin</td>
+              <td>:</td>
+              <td>Setiap bin memiliki aturan <strong>Kapasitas Maksimal</strong> (berdasarkan kuantitas unit, volume, atau berat).</td>
+            </tr>
+            <tr>
+              <td>Putaway Suggestion</td>
+              <td>:</td>
+              <td>Sistem menggunakan skoring aturan: 1) Bin yang sudah berisi jenis barang yang sama (FIFO), 2) Zone yang sesuai dengan kategori barang, 3) Kapasitas mencukupi.</td>
+            </tr>
+            <tr>
+              <td>Level Scanning</td>
+              <td>:</td>
+              <td>Bersifat hirarkis (contoh: memindai SN Palet akan memutasi seluruh SN Kardus dan SN Satuan di dalamnya secara bersamaan).</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn">
+          <span class="callout-icon">🛡️</span>
+          <div><strong>Validasi:</strong><br/>- Jika <em>Putaway</em> melebihi batas kapasitas Bin, tampilkan <em>Soft Warning</em> untuk administrator/supervisor: <em>"Kapasitas Bin [NamaBin] melebihi batas. Override persetujuan dibutuhkan."</em><br/>- Bin berstatus <strong>Blocked/Karantina</strong> menolak seluruh transaksi masuk (Inbound) dan keluar (Outbound).</div>
+        </div>
+
+        <!-- 3.3 -->
+        <h3 class="sub-title">3.3 Transaksi Gudang Dasar</h3>
+        <h4 class="sub-sub-title">Behavior & Aturan</h4>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Goods Receipt (Inbound)</td>
+              <td>:</td>
+              <td>Mendukung penerimaan berbasis <em>Purchase Order</em> dari Accurate atau penerimaan langsung (Direct Receipt). Sistem akan merilis daftar SN baru dan mencetak label (bila diperlukan).</td>
+            </tr>
+            <tr>
+              <td>Goods Issue (Outbound)</td>
+              <td>:</td>
+              <td>Mendukung pengeluaran berbasis <em>Sales Order</em> atau permintaan inter-departemen. Disarankan menggunakan metode FIFO secara <em>systematic alert</em>.</td>
+            </tr>
+            <tr>
+              <td>Transfer Gudang</td>
+              <td>:</td>
+              <td>Wajib menerapkan mekanisme "Two-Step Transfer". Gudang asal memproses pengeluaran, gudang tujuan memproses penerimaan (In-Transit state).</td>
+            </tr>
+            <tr>
+              <td>Adjustment</td>
+              <td>:</td>
+              <td>Perubahan stok paksa. Semua adjustment wajib mengisi alasan (Damage, Lost, Found, Expired).</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn">
+          <span class="callout-icon">🛡️</span>
+          <div><strong>Validasi:</strong><br/>- Penerimaan barang di luar cakupan referensi (PO) tidak valid (jika referensi ditetapkan mutlak).<br/>- Pengeluaran divalidasi hingga level SN: <em>"Item tidak ditemukan pada lokasi terkait"</em> atau <em>"Stok defisit"</em>.<br/>- Transfer tidak valid jika gudang tujuan diatur dalam status Inaktif.</div>
+        </div>
+
+        <!-- 3.4 -->
+        <h3 class="sub-title">3.4 Assembly & Disassembly (BOM)</h3>
+        <h4 class="sub-sub-title">Behavior & Aturan</h4>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Assembly</td>
+              <td>:</td>
+              <td>Menggabungkan berbagai part ke produk jadi berdasarkan <em>nested BOM</em>. Sistem mendepresiasi stok komponen dan meng-generate SN baru untuk barang jadi.</td>
+            </tr>
+            <tr>
+              <td>Disassembly</td>
+              <td>:</td>
+              <td>Pemisahan produk jadi kembali menjadi serpihan part asal berdasar BOM. Komponen dapat di-set status kondisinya (Cacat/Bagus) usai disassembly.</td>
+            </tr>
+            <tr>
+              <td>Work Order (WO)</td>
+              <td>:</td>
+              <td>Prosedur dikelola melalui dokumen Work Order dengan 3 state: Pending, In-Progress, Completed.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn">
+          <span class="callout-icon">🛡️</span>
+          <div><strong>Validasi:</strong><br/>- Tidak dapat merubah status WO menjadi <em>In-Progress</em> bila ketersediaan kuantitas bahan baku komponen kurang dari persyaratan BOM.<br/>- Bahan baku yang dimasukkan pada WO <em>In-Progress</em> otomatis berstatus <em>Reserved</em> agar tidak terpakai oleh transaksi lain.</div>
+        </div>
+
+        <!-- 3.5 -->
+        <h3 class="sub-title">3.5 Stock Opname (Rekonsiliasi Fisik)</h3>
+        <h4 class="sub-sub-title">Behavior & Aturan</h4>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Mode Pelaksanaan</td>
+              <td>:</td>
+              <td>Mendukung dua mode pelaksanaan: <strong>Full Count</strong> (mengunci operasional gudang total) dan <strong>Cycle Count</strong> (hanya lokasi/zona tertentu).</td>
+            </tr>
+            <tr>
+              <td>Multi-Petugas</td>
+              <td>:</td>
+              <td>Memungkinkan pendelegasian area ke beberapa user scanner berbeda (<em>multi-petugas</em>).</td>
+            </tr>
+            <tr>
+              <td>Rekonsiliasi Otomatis</td>
+              <td>:</td>
+              <td>Sistem membandingkan data hitung manual dengan data <em>on-hand</em>. Jika muncul <em>variance</em>, data dilempar ke approval flow supervisor.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn">
+          <span class="callout-icon">🛡️</span>
+          <div><strong>Validasi:</strong><br/>- Lokasi (Bin) tidak dapat memulai siklus Stock Opname jika masih ada tugas <em>Picking</em> atau transaksi gantung yang belum diselesaikan.<br/>- Tidak dapat memposting (menyetujui) Stock Opname sebelum semua <em>variance</em> telah diselidiki dan diizinkan oleh Supervisor / Super Admin.</div>
+        </div>
+
+        <!-- 3.6 -->
+        <h3 class="sub-title">3.6 Layout Gudang 2D (Visualisasi UI)</h3>
+        <h4 class="sub-sub-title">Behavior & Aturan</h4>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Rendering Heatmap</td>
+              <td>:</td>
+              <td>Dirender secara <em>real-time</em> berbasis perhitungan kapasitas persentase masing-masing Bin.</td>
+            </tr>
+            <tr>
+              <td>Inspektor Detail</td>
+              <td>:</td>
+              <td>Antarmuka mengizinkan klik elemen Bin untuk meluncurkan inspektor detail stok.</td>
+            </tr>
+            <tr>
+              <td>Drag-and-Drop</td>
+              <td>:</td>
+              <td>Pemindahan posisi Bin hanya diperbolehkan bila pengguna memiliki role Super Admin / Admin Spare Part (Edit Mode aktif).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section class="section collapsed" id="s4">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Antarmuka Eksternal (Integrasi Accurate Online)</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">Aturan & Behavior Sinkronisasi</h3>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Protokol Standar</td>
+              <td>:</td>
+              <td>Sinkronisasi dua arah dilakukan menggunakan standar OAuth2 dan REST API v1 milik Accurate Online.</td>
+            </tr>
+            <tr>
+              <td>Trigger Real-time</td>
+              <td>:</td>
+              <td>Data yang mempengaruhi nilai aset atau finansial (GRN, DO, Adjustment, Assembly conversion) <strong>WAJIB</strong> terdorong secara <em>real-time</em> (atau diantrikan bila offline).</td>
+            </tr>
+            <tr>
+              <td>Sync Master Data</td>
+              <td>:</td>
+              <td>Master Barang tersinkronisasi otomatis dari Accurate Online ke WMS melalui scheduler (polling) dan <em>Webhook</em> on-demand.</td>
+            </tr>
+            <tr>
+              <td>Message Queue</td>
+              <td>:</td>
+              <td>Seluruh antrian transaksi dikelola oleh perantara Message Queue (RabbitMQ).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="sub-title">Validasi Integrasi (Conflict Resolution)</h3>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Rate Limiting</td>
+              <td>:</td>
+              <td>Menangani <em>API Rate Limiting</em> dari Accurate Online dengan melakukan pengereman request (<em>Throttling / Exponential Backoff</em>).</td>
+            </tr>
+            <tr>
+              <td>Dead Letter Queue</td>
+              <td>:</td>
+              <td>Transaksi gagal (karena kendala jaringan atau data tidak lengkap) dipindahkan ke <em>Dead Letter Queue (DLQ)</em>, dimunculkan sebagai tanda merah (Sync Failed) di dashboard admin WMS.</td>
+            </tr>
+            <tr>
+              <td>Manual Retry</td>
+              <td>:</td>
+              <td>Admin wajib melakukan intervensi perbaikan data sebelum melakukan <em>Manual Retry</em>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section class="section collapsed" id="s5">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Kebutuhan Non-Fungsional (NFR)</h2>
+      </div>
+      <div class="content">
+        <div class="nfr-grid">
+          <div class="nfr-card">
+            <div class="nfr-metric">2 Detik</div>
+            <div class="nfr-name">Performa Response Time</div>
+            <div class="nfr-desc">Operasi scanner barcode dan validasi transaksi tidak lebih dari 2 detik di area dengan koneksi internet moderat.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">10.000+</div>
+            <div class="nfr-name">Kapasitas Rendering 2D</div>
+            <div class="nfr-desc">Fitur 2D Canvas mampu merender hingga 10.000 lokasi entitas bin/rack secara mulus tanpa mengorbankan framerate.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">TLS 1.2+</div>
+            <div class="nfr-name">Standar Keamanan Transmisi</div>
+            <div class="nfr-desc">Seluruh aliran data dilindungi enkripsi. Authentication menggunakan JWT dan sistem RBAC yang ketat. Kredensial sinkronisasi disembunyikan.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">Abadi</div>
+            <div class="nfr-name">Audit Log (Immutable)</div>
+            <div class="nfr-desc">Seluruh mutasi disimpan secara permanen (JSON structure format: Who, Action, Timestamp, Before, After).</div>
+          </div>
+        </div>
+
+        <h3 class="sub-title">Usability & Antarmuka</h3>
+        <ul class="checklist">
+          <li>User Interface sepenuhnya mengadopsi prinsip desain adaptif untuk tablet dan desktop.</li>
+          <li>Mengakomodasi <strong>Dark Mode</strong> untuk menekan tingkat kelelahan mata staf operasional pada kondisi ruangan minim cahaya.</li>
+          <li>Optimasi elemen fokus/ketukan (<em>focus handling</em>) untuk integrasi pemindai barcode <em>Bluetooth</em> yang bertindak sebagai <em>keyboard HID</em> agar tidak sering membutuhkan kursor mouse.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="doc-footer">
+      <div class="footer-brand">WMS · SRS v1.0</div>
+      <div class="footer-note">// Dokumen ini bersifat rahasia dan hanya untuk internal. Revisi sesuai kebutuhan proyek.</div>
+    </footer>
+
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Back to top">
+      ↑
+    </button>
+  </div>
+</body>
+
+</html>

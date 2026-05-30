@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SDD — Warehouse Management System</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <script src="../assets/script.js" defer></script>
+</head>
+
+<body>
+  <a href="index.html"
+    style="position: fixed; bottom: 24px; left: 24px; z-index: 9999; padding: 10px 20px; background: #6366f1; color: white; border-radius: 8px; text-decoration: none; font-family: 'Syne', sans-serif; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">&larr;
+    Back</a>
+  <div class="page-wrap">
+    <button id="theme-toggle-btn" class="theme-toggle">
+      <span id="theme-icon">☀️</span>
+      <span id="theme-text">Light Mode</span>
+    </button>
+
+    <!-- HEADER -->
+    <header class="doc-header">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <button id="toc-burger" class="burger-btn" aria-label="Toggle Table of Contents">
+          ☰
+        </button>
+        <div class="header-badge" style="margin-bottom: 0;">Software Design Document</div>
+      </div>
+      <h1 class="doc-title">TALOS Warehouse<br />Management System</h1>
+      <p class="doc-subtitle">Dokumen SDD ini menjabarkan rancangan arsitektur, database, API, dan struktur kode
+        (backend & frontend) untuk pengembangan Talos WMS berdasarkan PRD dan SRS.</p>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-label">Versi Dokumen</div>
+          <div class="meta-value">v1.0.0</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Tanggal</div>
+          <div class="meta-value">Mei 2025</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Status</div>
+          <div class="meta-value accent">Final Draft</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Frontend</div>
+          <div class="meta-value">Next.js, TypeScript</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Backend</div>
+          <div class="meta-value">Go (Golang) v1.22+</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Database</div>
+          <div class="meta-value">PostgreSQL & Redis</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- TOC -->
+    <div id="toc-overlay" class="toc-overlay"></div>
+    <nav class="toc" id="toc-drawer">
+      <div class="toc-title">// Daftar Isi</div>
+      <ul class="toc-list">
+        <li><a href="#s1"><span class="toc-num">01</span> Pendahuluan</a></li>
+        <li><a href="#s2"><span class="toc-num">02</span> Arsitektur Sistem</a></li>
+        <li><a href="#s3"><span class="toc-num">03</span> Desain Database</a></li>
+        <li><a href="#s4"><span class="toc-num">04</span> Desain API</a></li>
+        <li><a href="#s5"><span class="toc-num">05</span> Struktur Backend</a></li>
+        <li><a href="#s6"><span class="toc-num">06</span> Struktur Frontend</a></li>
+      </ul>
+    </nav>
+
+    <!-- SECTION 1 -->
+    <section class="section collapsed" id="s1">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Pendahuluan</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">1.1 Tujuan Dokumen</h3>
+        <p>Software Design Document (SDD) ini memberikan gambaran komprehensif terkait desain sistem pada TALOS WMS.
+          Dokumen ini menjadi pedoman implementasi bagi developer (Backend dan Frontend), DevOps, serta Database
+          Administrator untuk memastikan bahwa perangkat lunak yang dibangun selaras dengan spesifikasi fungsional dan
+          teknis yang tercantum pada PRD dan SRS.</p>
+
+        <h3 class="sub-title">1.2 Komponen Desain Utama</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Komponen</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Arsitektur</strong></td>
+                <td>Gambaran level tinggi dari infrastruktur, integrasi, dan komunikasi data.</td>
+              </tr>
+              <tr>
+                <td><strong>Database</strong></td>
+                <td>Desain skema data, struktur relasi, dan strategi penyimpanan.</td>
+              </tr>
+              <tr>
+                <td><strong>API</strong></td>
+                <td>Standar komunikasi antar layanan (REST/RPC).</td>
+              </tr>
+              <tr>
+                <td><strong>Struktur Backend</strong></td>
+                <td>Pola desain, layer aplikasi, dan manajemen queue.</td>
+              </tr>
+              <tr>
+                <td><strong>Struktur Frontend</strong></td>
+                <td>Pengelolaan state, routing, dan integrasi UI Canvas 2D.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section class="section collapsed" id="s2">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Arsitektur Sistem</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">2.1 Arsitektur High-Level</h3>
+        <p>TALOS WMS menggunakan arsitektur <strong>Client-Server (Monolith Modular/Microservices-ready)</strong>
+          berbasis cloud. Lapisan presentasi dan lapisan logika bisnis dipisahkan melalui antarmuka REST API dan
+          WebSocket.</p>
+
+        <div class="feature-grid">
+          <div class="feature-card blue">
+            <span class="card-icon">🖥️</span>
+            <div class="card-title">Client Layer</div>
+            <p class="card-desc">Aplikasi web responsif berbasis Next.js (React) dan TypeScript. Berfungsi sebagai
+              antarmuka untuk Orang Gudang (Mobile) hingga Super Admin (Desktop).</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">⚙️</span>
+            <div class="card-title">API Gateway / Application Layer</div>
+            <p class="card-desc">Service utama dibangun dengan Golang. Menangani routing, load balancing dasar,
+              autentikasi (JWT), dan bisnis logik WMS.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">🗄️</span>
+            <div class="card-title">Data Storage Layer</div>
+            <p class="card-desc">PostgreSQL sebagai relational database utama (RDBMS). Redis digunakan untuk caching,
+              session management, dan real-time states.</p>
+          </div>
+          <div class="feature-card purple">
+            <span class="card-icon">📨</span>
+            <div class="card-title">Message Broker / Integration</div>
+            <p class="card-desc">RabbitMQ digunakan untuk mengelola antrian asinkron, terutama untuk komunikasi data
+              dengan sistem eksternal (Accurate Online API).</p>
+          </div>
+        </div>
+
+        <h3 class="sub-title">2.2 Alur Integrasi (Accurate Online)</h3>
+        <p>Integrasi dengan Accurate Online dilakukan melalui mekanisme Sinkronisasi Dua Arah:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Arah Sinkronisasi</th>
+                <th>Mekanisme & Proses</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Inbound (Accurate ke WMS)</strong></td>
+                <td>Webhook atau Polling (Cron job pada Golang) menarik Master Barang, Purchase Order, dan Sales Order.
+                  Data disimpan dalam database internal untuk proses WMS.</td>
+              </tr>
+              <tr>
+                <td><strong>Outbound (WMS ke Accurate)</strong></td>
+                <td>Transaksi (GRN, DO, Adjustment, Assembly) di-push ke Message Queue (RabbitMQ). Worker background
+                  mengambil pesan dan memanggil API Accurate Online untuk membukukan transaksi secara finansial.</td>
+              </tr>
+              <tr>
+                <td><strong>Handling Error</strong></td>
+                <td>Mekanisme <em>Dead Letter Queue (DLQ)</em> digunakan apabila request gagal, yang kemudian
+                  memunculkan notifikasi kepada Super Admin untuk di-retry.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section class="section collapsed" id="s3">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Desain Database</h2>
+      </div>
+      <div class="content">
+        <p>Database utama menggunakan PostgreSQL dengan nama database <strong>hera</strong>. Semua tabel terkait WMS ini
+          akan disimpan di dalam <strong>schema talos</strong> (<code>talos.*</code>). Tabel global seperti
+          <code>users</code> dan <code>roles</code> berada di schema <code>public</code> dan tidak dicantumkan dalam
+          spesifikasi ini.</p>
+
+        <h3 class="sub-title">3.1 Kategori & Konvensi Penamaan Tabel</h3>
+        <p>Seluruh tabel dalam schema talos menggunakan awalan <code>t_</code> yang diikuti dengan kode kategori modul.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Kategori (Prefix)</th>
+                <th>Keterangan</th>
+                <th>Contoh Tabel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>t_core_</code></td>
+                <td>Data master operasional & sistem inti WMS.</td>
+                <td><code>t_core_warehouses</code>, <code>t_core_items</code></td>
+              </tr>
+              <tr>
+                <td><code>t_cfg_</code></td>
+                <td>Konfigurasi dan pengaturan (termasuk permission jika ada spesifik).</td>
+                <td><code>t_cfg_permissions</code></td>
+              </tr>
+              <tr>
+                <td><code>t_ibd_</code></td>
+                <td>Transaksi Inbound (Penerimaan Barang).</td>
+                <td><code>t_ibd_receipts</code></td>
+              </tr>
+              <tr>
+                <td><code>t_obd_</code></td>
+                <td>Transaksi Outbound (Pengeluaran Barang).</td>
+                <td><code>t_obd_deliveries</code></td>
+              </tr>
+              <tr>
+                <td><code>t_inv_</code></td>
+                <td>Manajemen Inventory, Stok, dan Serial Number.</td>
+                <td><code>t_inv_serial_numbers</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="sub-title">3.2 Skema Detail Tabel</h3>
+
+        <h4 class="sub-sub-title">1. Tabel <code>talos.t_core_warehouses</code></h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Tipe Data</th>
+                <th>Constraint</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td>PK</td>
+                <td>ID Unik Gudang</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(20)</td>
+                <td>UNIQUE, NOT NULL</td>
+                <td>Kode gudang (cth: WH01)</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(100)</td>
+                <td>NOT NULL</td>
+                <td>Nama gudang</td>
+              </tr>
+              <tr>
+                <td>address</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Alamat fisik gudang</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(20)</td>
+                <td>DEFAULT 'ACTIVE'</td>
+                <td>Status operasional gudang</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 class="sub-sub-title">2. Tabel <code>talos.t_core_bins</code> (Lokasi Penyimpanan)</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Tipe Data</th>
+                <th>Constraint</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td>PK</td>
+                <td>ID Unik Bin</td>
+              </tr>
+              <tr>
+                <td>rack_id</td>
+                <td>UUID</td>
+                <td>FK (t_core_racks.id)</td>
+                <td>Referensi rak tempat bin berada</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(50)</td>
+                <td>UNIQUE, NOT NULL</td>
+                <td>Kode lokasi (cth: WH01-A-R1-L1-B1)</td>
+              </tr>
+              <tr>
+                <td>max_capacity</td>
+                <td>INT</td>
+                <td>DEFAULT 0</td>
+                <td>Kapasitas maksimal (unit)</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(20)</td>
+                <td>DEFAULT 'AVAILABLE'</td>
+                <td>AVAILABLE, BLOCKED, FULL</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 class="sub-sub-title">3. Tabel <code>talos.t_core_items</code> (Master Barang)</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Tipe Data</th>
+                <th>Constraint</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td>PK</td>
+                <td>ID Unik Barang</td>
+              </tr>
+              <tr>
+                <td>accurate_id</td>
+                <td>BIGINT</td>
+                <td>UNIQUE</td>
+                <td>ID barang dari Accurate Online</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(50)</td>
+                <td>UNIQUE, NOT NULL</td>
+                <td>SKU / Kode barang</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(200)</td>
+                <td>NOT NULL</td>
+                <td>Nama lengkap barang</td>
+              </tr>
+              <tr>
+                <td>uom</td>
+                <td>VARCHAR(20)</td>
+                <td>NOT NULL</td>
+                <td>Unit of Measurement (PCS, BOX)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 class="sub-sub-title">4. Tabel <code>talos.t_inv_serial_numbers</code></h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Tipe Data</th>
+                <th>Constraint</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td>PK</td>
+                <td>ID Internal SN</td>
+              </tr>
+              <tr>
+                <td>sn_code</td>
+                <td>VARCHAR(100)</td>
+                <td>UNIQUE, NOT NULL</td>
+                <td>Barcode Serial Number</td>
+              </tr>
+              <tr>
+                <td>item_id</td>
+                <td>UUID</td>
+                <td>FK (t_core_items.id)</td>
+                <td>Barang terkait</td>
+              </tr>
+              <tr>
+                <td>bin_id</td>
+                <td>UUID</td>
+                <td>FK (t_core_bins.id)</td>
+                <td>Lokasi bin saat ini</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(20)</td>
+                <td>NOT NULL</td>
+                <td>AVAILABLE, RESERVED, CONSUMED, IN-TRANSIT</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 class="sub-sub-title">5. Tabel <code>talos.t_ibd_receipts</code> (Inbound)</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Tipe Data</th>
+                <th>Constraint</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td>PK</td>
+                <td>ID Transaksi Penerimaan</td>
+              </tr>
+              <tr>
+                <td>doc_number</td>
+                <td>VARCHAR(50)</td>
+                <td>UNIQUE, NOT NULL</td>
+                <td>Nomor dokumen GRN</td>
+              </tr>
+              <tr>
+                <td>warehouse_id</td>
+                <td>UUID</td>
+                <td>FK (t_core_warehouses.id)</td>
+                <td>Gudang penerima</td>
+              </tr>
+              <tr>
+                <td>received_date</td>
+                <td>TIMESTAMP</td>
+                <td>NOT NULL</td>
+                <td>Waktu barang diterima</td>
+              </tr>
+              <tr>
+                <td>sync_status</td>
+                <td>VARCHAR(20)</td>
+                <td>DEFAULT 'PENDING'</td>
+                <td>PENDING, SYNCED, FAILED</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 class="sub-sub-title">6. Tabel <code>talos.t_obd_deliveries</code> (Outbound)</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Tipe Data</th>
+                <th>Constraint</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td>PK</td>
+                <td>ID Transaksi Pengeluaran</td>
+              </tr>
+              <tr>
+                <td>doc_number</td>
+                <td>VARCHAR(50)</td>
+                <td>UNIQUE, NOT NULL</td>
+                <td>Nomor dokumen DO</td>
+              </tr>
+              <tr>
+                <td>warehouse_id</td>
+                <td>UUID</td>
+                <td>FK (t_core_warehouses.id)</td>
+                <td>Gudang pengeluar</td>
+              </tr>
+              <tr>
+                <td>shipped_date</td>
+                <td>TIMESTAMP</td>
+                <td>NOT NULL</td>
+                <td>Waktu barang dikeluarkan</td>
+              </tr>
+              <tr>
+                <td>sync_status</td>
+                <td>VARCHAR(20)</td>
+                <td>DEFAULT 'PENDING'</td>
+                <td>PENDING, SYNCED, FAILED</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:16px;">
+          <span class="callout-icon">💡</span>
+          <div><strong>Strategi Indexing:</strong> Indexing pada kolom <code>sn_code</code>, <code>code</code> (pada
+            items), dan <code>bin_id</code> bersifat esensial untuk menjamin waktu query &lt; 2 detik pada saat scanning
+            massal.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section class="section collapsed" id="s4">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Desain API</h2>
+      </div>
+      <div class="content">
+        <p>TALOS WMS mengekspos RESTful API (dan WebSocket untuk operasi real-time). Seluruh API wajib menggunakan
+          Header Authorization <code>Bearer [Token]</code>.</p>
+
+        <h3 class="sub-title">4.1 Konvensi Endpoint RESTful</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Konvensi</th>
+                <th>Standar / Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Base URL</strong></td>
+                <td><code>/api/v1/</code></td>
+              </tr>
+              <tr>
+                <td><strong>Format Repons</strong></td>
+                <td>Terstandarisasi <code>{ "status": 200, "message": "Success", "data": {...} }</code></td>
+              </tr>
+              <tr>
+                <td><strong>Error Handling</strong></td>
+                <td>Error terstruktur dengan kode bisnis yang spesifik (misal: <code>ERR_SN_DUPLICATE</code>,
+                  <code>ERR_BIN_FULL</code>).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="sub-title">4.2 Modul Endpoint Utama</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Modul</th>
+                <th>Method & Endpoint (Contoh)</th>
+                <th>Fungsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Auth</td>
+                <td><code>POST /api/v1/auth/login</code></td>
+                <td>Autentikasi dan penerbitan JWT</td>
+              </tr>
+              <tr>
+                <td>Master Data</td>
+                <td><code>GET /api/v1/items</code><br /><code>POST /api/v1/locations/bins</code></td>
+                <td>Manajemen data barang, gudang, dan lokasi</td>
+              </tr>
+              <tr>
+                <td>Transaksi</td>
+                <td><code>POST /api/v1/transactions/inbound</code><br /><code>POST /api/v1/transactions/transfer</code>
+                </td>
+                <td>Memproses penerimaan dan pemindahan barang dengan payload SN</td>
+              </tr>
+              <tr>
+                <td>Inventory</td>
+                <td><code>GET /api/v1/inventory/bins/:id</code><br /><code>GET /api/v1/inventory/serial/:sn</code></td>
+                <td>Pencarian stok, kapasitas Bin, dan penelusuran riwayat SN</td>
+              </tr>
+              <tr>
+                <td>Assembly</td>
+                <td><code>POST /api/v1/assembly/work-orders</code></td>
+                <td>Membuat WO berdasarkan BOM, reserve komponen, merilis SN baru</td>
+              </tr>
+              <tr>
+                <td>Sync</td>
+                <td><code>POST /api/v1/sync/retry-failed</code></td>
+                <td>Manual trigger retry transaksi gagal dari DLQ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section class="section collapsed" id="s5">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Struktur Backend</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">5.1 Pola Clean Architecture (Golang)</h3>
+        <p>Pengembangan backend menggunakan bahasa <strong>Go (Golang)</strong> dan mengikuti pola <em>Clean
+            Architecture</em> (Domain-Driven Design). Struktur kode dibagi ke dalam layer yang terisolasi:</p>
+
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td><code>cmd/</code></td>
+              <td>:</td>
+              <td>Entry point aplikasi (main.go), inisialisasi server, dan worker.</td>
+            </tr>
+            <tr>
+              <td><code>internal/delivery/</code></td>
+              <td>:</td>
+              <td>Lapisan presentasi API. Mengandung Router (Gin/Echo), Handler/Controller HTTP, dan Middleware (Auth,
+                Logger, CORS).</td>
+            </tr>
+            <tr>
+              <td><code>internal/usecase/</code></td>
+              <td>:</td>
+              <td>Logic bisnis aplikasi. Mengorkestrasi aliran data, validasi bisnis (seperti pengecekan kapasitas Bin,
+                verifikasi status SN), dan manajemen transaksi (DB transaction).</td>
+            </tr>
+            <tr>
+              <td><code>internal/repository/</code></td>
+              <td>:</td>
+              <td>Interaksi langsung dengan database PostgreSQL (menggunakan SQL/ORM seperti GORM/sqlx) dan redis.</td>
+            </tr>
+            <tr>
+              <td><code>internal/domain/</code></td>
+              <td>:</td>
+              <td>Mendefinisikan tipe entitas utama (struct) dan antarmuka (interface) yang dipakai di Repository dan
+                Usecase.</td>
+            </tr>
+            <tr>
+              <td><code>pkg/</code></td>
+              <td>:</td>
+              <td>Library utilitas eksternal yang dapat digunakan ulang (contoh: Konfigurasi Accurate API Client,
+                utilitas generator Barcode, enkripsi).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-warn" style="margin-top:16px;">
+          <span class="callout-icon">⚡</span>
+          <div><strong>Kinerja & Konkurensi:</strong><br />Proses ekspor laporan PDF/Excel dan antrian Push API Accurate
+            dijalankan secara Asynchronous menggunakan Goroutines dan Message Broker (RabbitMQ) agar tidak memblokir
+            response thread utama.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section class="section collapsed" id="s6">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2 class="section-title">Struktur Frontend</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">6.1 Next.js App Router Architecture</h3>
+        <p>Aplikasi klien menggunakan <strong>Next.js (App Router)</strong> dengan bahasa TypeScript. Struktur
+          difokuskan pada manajemen rute hierarkis dan pengalaman pengguna tingkat tinggi.</p>
+
+        <div class="feature-grid">
+          <div class="feature-card blue">
+            <span class="card-icon">🗂️</span>
+            <div class="card-title">Struktur Folder</div>
+            <p class="card-desc">Menggunakan pendekatan fitur-driven (<code>app/dashboard</code>,
+              <code>app/inventory</code>, <code>app/assembly</code>). Komponen modular disimpan di folder
+              <code>components/</code>.</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">🧠</span>
+            <div class="card-title">State Management</div>
+            <p class="card-desc">State global untuk sesi user, notifikasi, dan active-tab dikelola oleh
+              <strong>Zustand</strong>. Caching request API menggunakan React Query atau SWR.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">📱</span>
+            <div class="card-title">Interaksi Hardware</div>
+            <p class="card-desc">Modul scanner menggunakan integrasi <code>react-zxing</code> untuk membaca via kamera
+              perangkat dan <em>focus-trap</em> untuk scanner Bluetooth (HID Mode).</p>
+          </div>
+          <div class="feature-card purple">
+            <span class="card-icon">🗺️</span>
+            <div class="card-title">Canvas 2D Rendering</div>
+            <p class="card-desc">Visualisasi gudang (Layout 2D) menggunakan library <strong>Konva.js</strong> atau React
+              Konva, yang memungkinkan Drag-and-Drop elemen Rak serta rendering data heatmap stok (Canvas API).</p>
+          </div>
+        </div>
+
+        <h3 class="sub-title">6.2 Penanganan Offline & UI/UX</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Aspek</th>
+                <th>Pendekatan / Implementasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Optimistic UI</strong></td>
+                <td>Transaksi di frontend diasumsikan sukses untuk memberi respon visual yang cepat (di bawah 2 detik),
+                  sembari server memvalidasi di background.</td>
+              </tr>
+              <tr>
+                <td><strong>Dark Mode & Tema</strong></td>
+                <td>Didukung menggunakan TailwindCSS (class <code>dark</code>), desain standar <em>Tokens</em> diatur
+                  dalam <code>globals.css</code> sesuai dengan styling panduan perusahaan.</td>
+              </tr>
+              <tr>
+                <td><strong>Aksesibilitas Mobile</strong></td>
+                <td>Antarmuka Orang Gudang menggunakan tata letak layar penuh yang teroptimasi, tombol berukuran minimum
+                  44px, dan peringatan visual yang kontras tinggi.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer class="doc-footer">
+      <div class="footer-brand">WMS · SDD v1.0</div>
+      <div class="footer-note">// Dokumen ini bersifat rahasia dan hanya untuk internal. Revisi sesuai kebutuhan proyek.
+      </div>
+    </footer>
+
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Back to top">
+      ↑
+    </button>
+  </div>
+</body>
+
+</html>

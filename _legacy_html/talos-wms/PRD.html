@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRD — Warehouse Management System</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <script src="../assets/script.js" defer></script>
+</head>
+
+<body>
+  <a href="index.html" style="position: fixed; bottom: 24px; left: 24px; z-index: 9999; padding: 10px 20px; background: #6366f1; color: white; border-radius: 8px; text-decoration: none; font-family: 'Syne', sans-serif; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">&larr; Back</a>
+  <div class="page-wrap">
+    <button id="theme-toggle-btn" class="theme-toggle">
+      <span id="theme-icon">☀️</span>
+      <span id="theme-text">Light Mode</span>
+    </button>
+
+    <!-- HEADER -->
+    <header class="doc-header">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <button id="toc-burger" class="burger-btn" aria-label="Toggle Table of Contents">
+          ☰
+        </button>
+        <div class="header-badge" style="margin-bottom: 0;">Product Requirements Document</div>
+      </div>
+      <h1 class="doc-title">TALOS Warehouse<br />Management System</h1>
+      <p class="doc-subtitle">Sistem manajemen gudang terpadu dengan fitur serialized barcode, multi-warehouse,
+        sinkronisasi Accurate Online, dan assembly management.</p>
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-label">Versi Dokumen</div>
+          <div class="meta-value">v1.0.0</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Tanggal</div>
+          <div class="meta-value">Mei 2025</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Status</div>
+          <div class="meta-value accent">Draft</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Frontend</div>
+          <div class="meta-value">TypeScript</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Backend</div>
+          <div class="meta-value">Go (Golang)</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Integrasi</div>
+          <div class="meta-value">Accurate Online</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- TOC -->
+    <div id="toc-overlay" class="toc-overlay"></div>
+    <nav class="toc" id="toc-drawer">
+      <div class="toc-title">// Daftar Isi</div>
+      <ul class="toc-list">
+        <li><a href="#s1"><span class="toc-num">01</span> Ringkasan Eksekutif</a></li>
+        <li><a href="#s2"><span class="toc-num">02</span> Tujuan & Latar Belakang</a></li>
+        <li><a href="#s3"><span class="toc-num">03</span> Pengguna & Persona</a></li>
+        <li><a href="#s4"><span class="toc-num">04</span> Ruang Lingkup</a></li>
+        <li><a href="#s5"><span class="toc-num">05</span> Fitur Utama</a></li>
+        <li><a href="#s6"><span class="toc-num">06</span> Fitur Tambahan (WMS Dasar)</a></li>
+        <li><a href="#s7"><span class="toc-num">07</span> Integrasi Accurate Online</a></li>
+        <li><a href="#s8"><span class="toc-num">08</span> Arsitektur Teknis</a></li>
+        <li><a href="#s9"><span class="toc-num">09</span> Non-Functional Requirements</a></li>
+        <li><a href="#s10"><span class="toc-num">10</span> Matriks Prioritas Fitur</a></li>
+        <li><a href="#s11"><span class="toc-num">11</span> Roadmap & Fase Pengembangan</a></li>
+        <li><a href="#s12"><span class="toc-num">12</span> Risiko & Mitigasi</a></li>
+        <li><a href="#s13"><span class="toc-num">13</span> Asumsi & Dependensi</a></li>
+        <li><a href="#s14"><span class="toc-num">14</span> Glosarium</a></li>
+      </ul>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 1 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s1">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Ringkasan Eksekutif</h2>
+      </div>
+      <div class="content">
+        <p>Warehouse Management System (WMS) ini dirancang untuk mengelola operasional gudang secara menyeluruh — mulai
+          dari penerimaan barang, penyimpanan berbasis <strong>racking & bin</strong>, pengelolaan barcode serialized,
+          assemby/disassembly dengan Bill of Materials (BOM), hingga sinkronisasi dua arah dengan <strong>Accurate
+            Online</strong> sebagai sistem akuntansi utama.</p>
+        <p>Sistem ini dibangun untuk mendukung kebutuhan <strong>orang gudang, admin spare part,</strong> dan
+          <strong>parts analyst</strong> dengan antarmuka yang intuitif, dukungan multi-warehouse, serta visualisasi
+          tata letak gudang berbasis 2D. Seluruh transaksi stok dan mutasi barang yang terjadi di WMS akan otomatis
+          tersinkronisasi ke Accurate Online untuk menjaga konsistensi data keuangan dan inventori.</p>
+        <div class="callout callout-info">
+          <span class="callout-icon">ℹ</span>
+          <div>Dokumen ini merupakan Product Requirements Document (PRD) versi awal yang akan diperbaharui secara
+            iteratif seiring berjalannya proses discovery dan development.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 2 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s2">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Tujuan & Latar Belakang</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">Latar Belakang</h3>
+        <p>Pengelolaan gudang yang dilakukan secara manual atau dengan spreadsheet rentan terhadap human error,
+          ketidakakuratan stok, dan sulitnya penelusuran riwayat barang. Kebutuhan akan sistem yang mampu melacak setiap
+          unit barang secara serial (serialized tracking), mengelola gudang dengan struktur bertingkat (pallet, dus,
+          satuan), serta terintegrasi langsung dengan software akuntansi menjadi prioritas utama.</p>
+        <h3 class="sub-title">Tujuan Bisnis</h3>
+        <ul class="checklist">
+          <li>Meningkatkan akurasi data stok hingga ≥99% melalui sistem barcode serialized.</li>
+          <li>Mempercepat proses penerimaan, pengeluaran, dan perpindahan barang antar gudang.</li>
+          <li>Mengurangi waktu pelaksanaan stock opname hingga 60% dibandingkan proses manual.</li>
+          <li>Memberikan visibilitas penuh atas lokasi barang (rack, bin, level) secara real-time.</li>
+          <li>Mengeliminasi entri data ganda antara sistem gudang dan Accurate Online.</li>
+          <li>Menyediakan data analitik untuk mendukung keputusan pengadaan dan perencanaan stok.</li>
+        </ul>
+        <h3 class="sub-title">Tujuan Produk</h3>
+        <ul class="checklist">
+          <li>Membangun WMS berbasis web yang dapat diakses dari desktop maupun perangkat mobile/tablet.</li>
+          <li>Menyediakan API yang robust untuk integrasi dua arah dengan Accurate Online.</li>
+          <li>Mendukung operasional multi-warehouse dalam satu platform terpadu.</li>
+          <li>Memastikan performa sistem tetap optimal bahkan dengan volume transaksi tinggi.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 3 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s3">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Pengguna & Persona</h2>
+      </div>
+      <div class="content">
+        <div class="role-grid">
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(79,128,255,0.15);">🏭</div>
+            <div class="role-name">Orang Gudang</div>
+            <div class="role-desc">Melakukan penerimaan, pengeluaran, dan perpindahan fisik barang. Menggunakan barcode
+              scanner untuk update stok secara real-time.</div>
+          </div>
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(56,240,192,0.12);">🗂️</div>
+            <div class="role-name">Admin Spare Part</div>
+            <div class="role-desc">Mengelola master data barang, BOM, dan pengaturan lokasi gudang. Memproses permintaan
+              barang dan mengatur stock opname.</div>
+          </div>
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(245,166,35,0.12);">📊</div>
+            <div class="role-name">Parts Analyst</div>
+            <div class="role-desc">Menganalisis data pergerakan stok, membuat laporan, memantau KPI gudang, dan
+              memberikan rekomendasi pengadaan.</div>
+          </div>
+          <div class="role-card">
+            <div class="role-avatar" style="background:rgba(167,139,250,0.15);">🔐</div>
+            <div class="role-name">Super Admin / IT</div>
+            <div class="role-desc">Mengelola konfigurasi sistem, hak akses pengguna, integrasi Accurate Online, dan
+              pemeliharaan data master.</div>
+          </div>
+        </div>
+        <hr class="divider" />
+        <h3 class="sub-title">Matriks Hak Akses</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fitur</th>
+                <th>Orang Gudang</th>
+                <th>Admin Spare Part</th>
+                <th>Parts Analyst</th>
+                <th>Super Admin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Scan & Penerimaan Barang</td>
+                <td>✅ Full</td>
+                <td>✅ Full</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Pengeluaran Barang</td>
+                <td>✅ Full</td>
+                <td>✅ Full</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Transfer Antar Gudang</td>
+                <td>✅ Full</td>
+                <td>✅ Full</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Master Data Barang</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Layout Gudang 2D</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Assembly / Disassembly</td>
+                <td>✅ Eksekusi</td>
+                <td>✅ Full</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Stock Opname</td>
+                <td>✅ Input</td>
+                <td>✅ Full</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Laporan & Analitik</td>
+                <td>❌</td>
+                <td>👁 Terbatas</td>
+                <td>✅ Full</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Sinkronisasi Accurate</td>
+                <td>❌</td>
+                <td>👁 View</td>
+                <td>👁 View</td>
+                <td>✅ Full</td>
+              </tr>
+              <tr>
+                <td>Manajemen User & Role</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>✅ Full</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 4 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s4">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Ruang Lingkup</h2>
+      </div>
+      <div class="content">
+        <h4 class="sub-sub-title">In Scope</h4>
+        <ul class="checklist">
+          <li>Manajemen inventori lengkap (inbound, outbound, transfer, adjustment)</li>
+          <li>Barcode serialized — setiap unit barang memiliki identifier unik</li>
+          <li>Layout gudang 2D interaktif dengan penempatan rack dan bin</li>
+          <li>Multilevel storage: level palet, dus, satuan, dan level kustom</li>
+          <li>Assembly & Disassembly dengan manajemen BOM</li>
+          <li>Stock Opname berbasis gudang dengan rekonsiliasi otomatis</li>
+          <li>Multi-warehouse dengan transfer dan laporan per gudang</li>
+          <li>Sinkronisasi dua arah dengan Accurate Online</li>
+          <li>Modul reporting & dashboard analitik</li>
+          <li>Manajemen user, role, dan audit log</li>
+          <li>Dukungan perangkat mobile (tablet/smartphone) untuk aktivitas gudang</li>
+        </ul>
+        <h4 class="sub-sub-title">Out of Scope (v1.0)</h4>
+        <ul class="checklist">
+          <li>Integrasi dengan ERP/akuntansi selain Accurate Online</li>
+          <li>Modul pengadaan (purchasing) dan manajemen vendor</li>
+          <li>Fitur IoT / RFID tracking (dapat dipertimbangkan untuk v2.0)</li>
+          <li>Modul HR dan manajemen tenaga kerja gudang</li>
+          <li>Visualisasi gudang 3D (direncanakan v2.0)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 5 — FITUR UTAMA -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s5">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Fitur Utama</h2>
+      </div>
+      <div class="content">
+
+        <!-- 5.1 Sinkronisasi Accurate -->
+        <h3 class="sub-title">5.1 Sinkronisasi dengan Accurate Online</h3>
+        <p>Integrasi dua arah antara WMS dan Accurate Online memastikan konsistensi data antara operasional gudang dan
+          catatan akuntansi/keuangan perusahaan.</p>
+        <div class="feature-grid">
+          <div class="feature-card blue">
+            <span class="card-icon">🔄</span>
+            <div class="card-title">Sinkronisasi Real-time</div>
+            <p class="card-desc">Setiap transaksi penerimaan, pengeluaran, dan penyesuaian stok di WMS otomatis dikirim
+              ke Accurate Online menggunakan webhook atau polling interval.</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">📦</span>
+            <div class="card-title">Sync Master Barang</div>
+            <p class="card-desc">Data item/produk dari Accurate Online (kode, nama, satuan, harga pokok) otomatis
+              disinkronisasi sebagai master barang di WMS.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">📋</span>
+            <div class="card-title">Sync Dokumen Transaksi</div>
+            <p class="card-desc">Purchase Order, Sales Order, dan dokumen gudang (GRN, Delivery Order) sinkron dua arah.
+              Nomor dokumen Accurate dapat digunakan sebagai referensi.</p>
+          </div>
+          <div class="feature-card purple">
+            <span class="card-icon">⚠️</span>
+            <div class="card-title">Conflict Resolution</div>
+            <p class="card-desc">Mekanisme penanganan konflik data saat sinkronisasi gagal, termasuk antrian retry
+              otomatis, log error, dan notifikasi admin.</p>
+          </div>
+        </div>
+        <div class="callout callout-warn" style="margin-top:16px;">
+          <span class="callout-icon">⚡</span>
+          <div><strong>Catatan Teknis:</strong> Integrasi menggunakan Accurate Online REST API v1. Autentikasi
+            menggunakan OAuth2 dengan token yang diperbarui secara otomatis. Rate limit API Accurate Online perlu
+            diperhitungkan dalam desain antrian.</div>
+        </div>
+        <h4 class="sub-sub-title">Data yang Disinkronisasi</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Arah</th>
+                <th>Frekuensi</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Master Barang</td>
+                <td>Accurate → WMS</td>
+                <td>On-demand + scheduler</td>
+                <td>Kode, nama, satuan, kategori, HPP</td>
+              </tr>
+              <tr>
+                <td>Stok Masuk (GRN)</td>
+                <td>WMS → Accurate</td>
+                <td>Real-time</td>
+                <td>Jurnal penerimaan barang</td>
+              </tr>
+              <tr>
+                <td>Stok Keluar (DO)</td>
+                <td>WMS → Accurate</td>
+                <td>Real-time</td>
+                <td>Jurnal pengeluaran barang</td>
+              </tr>
+              <tr>
+                <td>Penyesuaian Stok</td>
+                <td>WMS → Accurate</td>
+                <td>Real-time</td>
+                <td>Hasil stock opname atau koreksi manual</td>
+              </tr>
+              <tr>
+                <td>Assembly/Disassembly</td>
+                <td>WMS → Accurate</td>
+                <td>Real-time</td>
+                <td>Konversi bahan menjadi produk jadi</td>
+              </tr>
+              <tr>
+                <td>Data Gudang</td>
+                <td>WMS ↔ Accurate</td>
+                <td>On-demand</td>
+                <td>Mapping gudang WMS ↔ lokasi Accurate</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- 5.2 Barcode Serialized -->
+        <h3 class="sub-title">5.2 Barcode Barang — Konsep Serialized</h3>
+        <p>Setiap unit barang diidentifikasi dengan nomor serial unik yang dikodekan dalam barcode (1D/2D). Pendekatan
+          ini memungkinkan penelusuran riwayat per unit dari penerimaan hingga pengeluaran.</p>
+        <div class="feature-grid">
+          <div class="feature-card teal">
+            <span class="card-icon">🏷️</span>
+            <div class="card-title">Penerbitan Serial Number</div>
+            <p class="card-desc">Serial number dapat digenerate otomatis oleh sistem (format konfigurabel) atau diinput
+              manual sesuai serial dari vendor/produsen.</p>
+          </div>
+          <div class="feature-card blue">
+            <span class="card-icon">📱</span>
+            <div class="card-title">Scan via Mobile/Scanner</div>
+            <p class="card-desc">Mendukung scan menggunakan kamera smartphone, barcode scanner USB/Bluetooth, maupun
+              barcode scanner industri (Zebra, Honeywell).</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">🔍</span>
+            <div class="card-title">Traceability Lengkap</div>
+            <p class="card-desc">Riwayat lengkap setiap serial: dari PO masuk → lokasi bin → perpindahan →
+              assembly/disassembly → pengeluaran atau disposal.</p>
+          </div>
+          <div class="feature-card lime">
+            <span class="card-icon">🖨️</span>
+            <div class="card-title">Cetak Label Barcode</div>
+            <p class="card-desc">Cetak label barcode secara massal atau satuan, mendukung format QR Code dan Code 128.
+              Template label dapat dikustomisasi.</p>
+          </div>
+        </div>
+        <h4 class="sub-sub-title">Format Serial Number</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Komponen</th>
+                <th>Contoh</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Kode Gudang</td>
+                <td>WH01</td>
+                <td>Identifikasi gudang asal</td>
+              </tr>
+              <tr>
+                <td>Kode Barang</td>
+                <td>SP-FILTER</td>
+                <td>Kode item dari master barang</td>
+              </tr>
+              <tr>
+                <td>Tanggal</td>
+                <td>20250510</td>
+                <td>Tanggal penerimaan (YYYYMMDD)</td>
+              </tr>
+              <tr>
+                <td>Sequence</td>
+                <td>0001</td>
+                <td>Nomor urut reset per hari/per item</td>
+              </tr>
+              <tr>
+                <td>Contoh Lengkap</td>
+                <td>WH01-SP-FILTER-20250510-0001</td>
+                <td>Barcode: Code 128 atau QR Code</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- 5.3 Layout 2D -->
+        <h3 class="sub-title">5.3 Layouting Gudang dengan Desain 2D</h3>
+        <p>Representasi visual tata letak gudang memungkinkan pengguna memahami posisi fisik barang secara intuitif dan
+          melakukan perencanaan penyimpanan yang efisien.</p>
+        <div class="feature-grid">
+          <div class="feature-card blue">
+            <span class="card-icon">🗺️</span>
+            <div class="card-title">Canvas 2D Interaktif</div>
+            <p class="card-desc">Editor drag-and-drop berbasis canvas (SVG/Canvas API) untuk mendefinisikan denah
+              gudang: zona, lorong, rack, dan area khusus.</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">🎨</span>
+            <div class="card-title">Zona & Area</div>
+            <p class="card-desc">Pembagian gudang ke zona (receiving, storage, dispatch, quarantine) dengan kode warna
+              berbeda untuk identifikasi cepat.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">📍</span>
+            <div class="card-title">Heatmap Stok</div>
+            <p class="card-desc">Visualisasi kepadatan stok per lokasi dalam tampilan heatmap — membantu identifikasi
+              area overstock atau kosong dengan cepat.</p>
+          </div>
+          <div class="feature-card purple">
+            <span class="card-icon">🔎</span>
+            <div class="card-title">Klik untuk Detail</div>
+            <p class="card-desc">Klik pada rack/bin di layout 2D langsung menampilkan informasi stok, daftar item, dan
+              riwayat transaksi lokasi tersebut.</p>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- 5.4 Multilevel -->
+        <h3 class="sub-title">5.4 Peletakan Barang Multi-Level</h3>
+        <p>Sistem mendukung hierarki penyimpanan barang yang fleksibel — dari level palet paling besar hingga satuan
+          terkecil, serta level kustom yang dapat dikonfigurasi sesuai kebutuhan operasional.</p>
+        <h4 class="sub-sub-title">Hierarki Level (Default)</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>Deskripsi</th>
+                <th>Contoh Kapasitas</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Level 1 — Palet</td>
+                <td>Unit paling besar, biasanya di atas palet kayu</td>
+                <td>1 palet = N dus</td>
+                <td>Barcode pada palet</td>
+              </tr>
+              <tr>
+                <td>Level 2 — Dus / Karton</td>
+                <td>Unit pengepakan menengah</td>
+                <td>1 dus = N satuan</td>
+                <td>Barcode pada dus</td>
+              </tr>
+              <tr>
+                <td>Level 3 — Satuan</td>
+                <td>Unit terkecil / individual item</td>
+                <td>1 unit = serialized</td>
+                <td>Barcode serial per unit</td>
+              </tr>
+              <tr>
+                <td>Level Kustom</td>
+                <td>Level tambahan sesuai kebutuhan</td>
+                <td>Konfigurabel</td>
+                <td>Contoh: bundle, set, kit</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-info" style="margin-top:14px;">
+          <span class="callout-icon">ℹ</span>
+          <div>Setiap level memiliki barcode/label tersendiri. Saat scan level tinggi (palet/dus), sistem dapat langsung
+            memproses semua unit di dalamnya secara batch.</div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- 5.5 Racking & Bin -->
+        <h3 class="sub-title">5.5 Racking & Bin Management</h3>
+        <div class="feature-grid">
+          <div class="feature-card sky">
+            <span class="card-icon">🗄️</span>
+            <div class="card-title">Struktur Lokasi Bertingkat</div>
+            <p class="card-desc">Hirarki: Gudang → Zona → Aisle → Rack → Level Rak → Bin. Setiap bin memiliki kode unik
+              dan kapasitas yang dapat dibatasi.</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">📏</span>
+            <div class="card-title">Kapasitas & Dimensi</div>
+            <p class="card-desc">Konfigurasi kapasitas per bin (volume, berat, atau jumlah unit). Sistem memberikan
+              peringatan saat kapasitas terlampaui.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">🎯</span>
+            <div class="card-title">Putaway Suggestion</div>
+            <p class="card-desc">Sistem merekomendasikan lokasi bin optimal untuk penyimpanan barang baru berdasarkan
+              aturan yang dikonfigurasi (FIFO, kategori, frekuensi).</p>
+          </div>
+          <div class="feature-card purple">
+            <span class="card-icon">🔒</span>
+            <div class="card-title">Bin Blocking</div>
+            <p class="card-desc">Kemampuan untuk memblokir bin tertentu dari aktivitas (sedang maintenance, karantina
+              barang, atau reserved untuk barang khusus).</p>
+          </div>
+        </div>
+        <h4 class="sub-sub-title">Format Kode Lokasi</h4>
+        <p>Contoh: <code
+            style="background:rgba(79,128,255,0.1);color:var(--accent2);padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace;">WH01-A-R03-L2-B05</code>
+          → Gudang 1, Zona A, Rack 03, Level 2, Bin 05</p>
+
+        <hr class="divider" />
+
+        <!-- 5.6 Assembly & Disassembly -->
+        <h3 class="sub-title">5.6 Assembly & Disassembly + BOM</h3>
+        <p>Fitur ini memungkinkan penggabungan beberapa komponen menjadi satu produk jadi (assembly) atau pemecahan
+          produk menjadi komponen penyusunnya (disassembly).</p>
+        <div class="feature-grid">
+          <div class="feature-card amber">
+            <span class="card-icon">🔧</span>
+            <div class="card-title">Manajemen BOM</div>
+            <p class="card-desc">Definisi Bill of Materials multi-level: satu produk jadi dapat terdiri dari komponen
+              yang masing-masing memiliki BOM tersendiri (nested BOM).</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">⚙️</span>
+            <div class="card-title">Proses Assembly</div>
+            <p class="card-desc">Penggabungan komponen sesuai BOM. Sistem otomatis mengurangi stok komponen dan menambah
+              stok produk jadi. Serial number produk jadi digenerate otomatis.</p>
+          </div>
+          <div class="feature-card red">
+            <span class="card-icon">🔨</span>
+            <div class="card-title">Proses Disassembly</div>
+            <p class="card-desc">Pemecahan produk jadi kembali ke komponen. Stok produk berkurang dan stok komponen
+              bertambah sesuai BOM. Kondisi komponen dapat diinput (baik/rusak).</p>
+          </div>
+          <div class="feature-card blue">
+            <span class="card-icon">📄</span>
+            <div class="card-title">Work Order Assembly</div>
+            <p class="card-desc">Proses assembly/disassembly menggunakan Work Order dengan status tracking (pending,
+              in-progress, completed). Mendukung partial assembly.</p>
+          </div>
+        </div>
+        <h4 class="sub-sub-title">Contoh Alur Assembly</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Langkah</th>
+                <th>Aksi</th>
+                <th>Efek Stok</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Buat Work Order Assembly untuk produk "Kit Filter A"</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Sistem mengecek ketersediaan komponen sesuai BOM</td>
+                <td>Reserve stok komponen</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Petugas gudang scan & konfirmasi komponen yang digunakan</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Selesaikan Work Order, input jumlah produk jadi</td>
+                <td>Kurangi stok komponen, tambah stok produk jadi</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Sistem generate serial number untuk produk jadi</td>
+                <td>Produk jadi tersedia di bin yang ditentukan</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Otomatis sync ke Accurate Online (jurnal konversi)</td>
+                <td>HPP dihitung ulang</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- 5.7 Stock Opname -->
+        <h3 class="sub-title">5.7 Stock Opname per Gudang</h3>
+        <div class="feature-grid">
+          <div class="feature-card blue">
+            <span class="card-icon">📊</span>
+            <div class="card-title">Cycle Count & Full Count</div>
+            <p class="card-desc">Mendukung dua mode: full stock opname (semua item gudang) dan cycle count (opname
+              periodik per zona/kategori tanpa menghentikan operasi).</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">👥</span>
+            <div class="card-title">Multi-Petugas</div>
+            <p class="card-desc">Penugasan area/bin berbeda ke petugas berbeda secara bersamaan. Real-time progress
+              tracking per petugas.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">⚖️</span>
+            <div class="card-title">Rekonsiliasi Otomatis</div>
+            <p class="card-desc">Perbandingan otomatis antara stok sistem vs hasil hitungan fisik. Selisih (variance)
+              ditampilkan per item dengan highlight untuk perbedaan signifikan.</p>
+          </div>
+          <div class="feature-card purple">
+            <span class="card-icon">✅</span>
+            <div class="card-title">Approval & Adjustment</div>
+            <p class="card-desc">Hasil opname memerlukan persetujuan supervisor sebelum penyesuaian stok dijalankan dan
+              disinkronkan ke Accurate Online.</p>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- 5.8 Multi Warehouse -->
+        <h3 class="sub-title">5.8 Multi Warehouse</h3>
+        <p>Sistem mendukung pengelolaan beberapa gudang dalam satu platform dengan visibilitas terpusat dan kontrol
+          akses berbasis gudang.</p>
+        <ul class="checklist">
+          <li>Setiap gudang memiliki konfigurasi tersendiri: layout, zona, rack, bin, dan aturan penyimpanan.</li>
+          <li>Transfer barang antar gudang dengan dokumen Transfer Order yang memerlukan konfirmasi di kedua sisi
+            (pengirim & penerima).</li>
+          <li>Dashboard agregat yang menampilkan total stok lintas gudang sekaligus view per gudang.</li>
+          <li>Laporan stok, mutasi, dan KPI dapat difilter per gudang atau lintas gudang.</li>
+          <li>Kontrol akses berbasis gudang: pengguna dapat dibatasi hanya mengakses gudang tertentu.</li>
+          <li>Mapping gudang WMS ke kode lokasi/gudang di Accurate Online.</li>
+        </ul>
+
+        <hr class="divider" />
+
+        <!-- 5.9 Reporting -->
+        <h3 class="sub-title">5.9 Reporting & Analitik</h3>
+        <div class="feature-grid">
+          <div class="feature-card blue">
+            <span class="card-icon">📈</span>
+            <div class="card-title">Dashboard Operasional</div>
+            <p class="card-desc">Real-time KPI: total item, nilai stok, aktivitas inbound/outbound hari ini, item dengan
+              stok rendah, dan pending work orders.</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">🗂️</span>
+            <div class="card-title">Laporan Inventori</div>
+            <p class="card-desc">Stok per gudang/bin, mutasi barang, aging stok, slow-moving items, dan laporan nilai
+              inventori berdasarkan metode FIFO/Average.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">🔍</span>
+            <div class="card-title">Laporan Transaksi</div>
+            <p class="card-desc">Riwayat penerimaan, pengeluaran, transfer, assembly/disassembly, dan stock opname
+              dengan filter tanggal, gudang, barang, dan pengguna.</p>
+          </div>
+          <div class="feature-card pink">
+            <span class="card-icon">⬇️</span>
+            <div class="card-title">Ekspor Laporan</div>
+            <p class="card-desc">Ekspor ke format Excel (XLSX), CSV, dan PDF. Penjadwalan laporan otomatis dengan
+              pengiriman via email.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 6 — FITUR WMS DASAR -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s6">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2 class="section-title">Fitur Tambahan (WMS Dasar)</h2>
+      </div>
+      <div class="content">
+        <div class="feature-grid">
+          <div class="feature-card blue">
+            <span class="card-icon">📥</span>
+            <div class="card-title">Goods Receipt (Penerimaan Barang)</div>
+            <p class="card-desc">Proses penerimaan dari Purchase Order atau tanpa PO (direct receipt). Verifikasi
+              quantity dan kondisi barang, cetak label barcode otomatis.</p>
+          </div>
+          <div class="feature-card red">
+            <span class="card-icon">📤</span>
+            <div class="card-title">Goods Issue (Pengeluaran Barang)</div>
+            <p class="card-desc">Proses pengeluaran berdasarkan Sales Order, permintaan internal, atau transfer.
+              Mendukung strategi FIFO, FEFO, dan LIFO.</p>
+          </div>
+          <div class="feature-card orange">
+            <span class="card-icon">↔️</span>
+            <div class="card-title">Stock Transfer</div>
+            <p class="card-desc">Pemindahan stok antar bin, antar zona, maupun antar gudang berbeda. Dilengkapi dokumen
+              Transfer Order dan track status.</p>
+          </div>
+          <div class="feature-card teal">
+            <span class="card-icon">✏️</span>
+            <div class="card-title">Stock Adjustment</div>
+            <p class="card-desc">Penyesuaian stok manual dengan alasan (damage, loss, found, dll). Memerlukan
+              persetujuan dan otomatis mencatat ke audit log.</p>
+          </div>
+          <div class="feature-card purple">
+            <span class="card-icon">🗃️</span>
+            <div class="card-title">Master Data Management</div>
+            <p class="card-desc">Manajemen master item, kategori, satuan, supplier, customer, dan gudang. Import bulk
+              via Excel template.</p>
+          </div>
+          <div class="feature-card lime">
+            <span class="card-icon">🔔</span>
+            <div class="card-title">Alert & Notifikasi</div>
+            <p class="card-desc">Peringatan stok minimum (reorder point), masa expired barang, kapasitas bin, dan
+              pending approval yang belum diselesaikan.</p>
+          </div>
+          <div class="feature-card sky">
+            <span class="card-icon">🧾</span>
+            <div class="card-title">Audit Log</div>
+            <p class="card-desc">Pencatatan lengkap semua aktivitas pengguna: who, what, when, before value, after value
+              untuk keperluan audit dan troubleshooting.</p>
+          </div>
+          <div class="feature-card amber">
+            <span class="card-icon">📱</span>
+            <div class="card-title">Mobile-Friendly Interface</div>
+            <p class="card-desc">UI responsif untuk akses dari tablet dan smartphone. Mode khusus operasional gudang
+              dengan tombol besar untuk kemudahan penggunaan dengan sarung tangan.</p>
+          </div>
+          <div class="feature-card pink">
+            <span class="card-icon">📋</span>
+            <div class="card-title">Picking & Packing</div>
+            <p class="card-desc">Pick list otomatis berdasarkan order, optimasi rute picking (wave picking), konfirmasi
+              packing dengan scan barcode.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 7 — INTEGRASI -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s7">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2 class="section-title">Detail Integrasi Accurate Online</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">Arsitektur Integrasi</h3>
+        <div
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-top:12px;">
+          <div class="arch-layer">
+            <div class="arch-label">WMS Application Layer</div>
+            <div class="arch-row">
+              <div class="arch-box">Inventory Service</div>
+              <div class="arch-box">Transaction Service</div>
+              <div class="arch-box">Assembly Service</div>
+            </div>
+          </div>
+          <div class="arch-arrow">↓ ↑</div>
+          <div class="arch-layer">
+            <div class="arch-label">Integration Layer</div>
+            <div class="arch-row">
+              <div class="arch-box" style="border-color:var(--accent2);color:var(--accent2);">Accurate Sync Service
+              </div>
+              <div class="arch-box" style="border-color:var(--accent2);color:var(--accent2);">Message Queue
+                (Redis/RabbitMQ)</div>
+              <div class="arch-box" style="border-color:var(--accent2);color:var(--accent2);">Retry & DLQ Handler</div>
+            </div>
+          </div>
+          <div class="arch-arrow">↓ ↑</div>
+          <div class="arch-layer">
+            <div class="arch-label">Accurate Online API</div>
+            <div class="arch-row">
+              <div class="arch-box" style="border-color:var(--accent);color:var(--accent);">REST API v1</div>
+              <div class="arch-box" style="border-color:var(--accent);color:var(--accent);">OAuth2 Auth</div>
+              <div class="arch-box" style="border-color:var(--accent);color:var(--accent);">Webhook Endpoint</div>
+            </div>
+          </div>
+        </div>
+        <h3 class="sub-title">Konfigurasi Integrasi</h3>
+        <ul class="checklist">
+          <li>Halaman konfigurasi untuk input Client ID, Client Secret, dan Company ID Accurate Online.</li>
+          <li>Test connection dengan feedback status berhasil/gagal secara real-time.</li>
+          <li>Mapping field antara entitas WMS dan entitas Accurate Online (kode item, kode gudang, dll).</li>
+          <li>Konfigurasi jadwal batch sync untuk data yang tidak perlu real-time.</li>
+          <li>Log sinkronisasi dengan filter status (success, failed, pending) dan tombol retry manual.</li>
+          <li>Mode dry-run untuk test sinkronisasi tanpa benar-benar mengirim data ke Accurate.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 8 — ARSITEKTUR TEKNIS -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s8">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2 class="section-title">Arsitektur Teknis</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">Tech Stack</h3>
+        <h4 class="sub-sub-title">Frontend — TypeScript</h4>
+        <div class="tech-stack">
+          <div class="tech-pill"><span class="tech-dot" style="background:#3178c6;"></span>TypeScript</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#61dafb;"></span>React / Next.js</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#38bdf8;"></span>TailwindCSS</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#f472b6;"></span>Zustand / React Query</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#a78bfa;"></span>Konva.js / Fabric.js (2D
+            Canvas)</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#fbbf24;"></span>react-zxing (Barcode Scanner)
+          </div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#34d399;"></span>Recharts / Nivo (Charts)
+          </div>
+        </div>
+        <h4 class="sub-sub-title">Backend — Go (Golang)</h4>
+        <div class="tech-stack">
+          <div class="tech-pill"><span class="tech-dot" style="background:#00acd7;"></span>Go 1.22+</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#38f0c0;"></span>Gin / Echo (HTTP Framework)
+          </div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#4f80ff;"></span>GORM (ORM)</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#336791;"></span>PostgreSQL</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#d92b3a;"></span>Redis (Cache & Queue)</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#ff6600;"></span>RabbitMQ (Message Queue)
+          </div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#f5a623;"></span>JWT Auth</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#a78bfa;"></span>MinIO (File Storage)</div>
+        </div>
+        <h4 class="sub-sub-title">Infrastructure & DevOps</h4>
+        <div class="tech-stack">
+          <div class="tech-pill"><span class="tech-dot" style="background:#2496ed;"></span>Docker + Docker Compose</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#326ce5;"></span>Kubernetes (Production)</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#f05032;"></span>GitHub Actions (CI/CD)</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#e6522c;"></span>Prometheus + Grafana</div>
+          <div class="tech-pill"><span class="tech-dot" style="background:#005ff8;"></span>Nginx (Reverse Proxy)</div>
+        </div>
+
+        <hr class="divider" />
+
+        <h3 class="sub-title">Arsitektur Sistem</h3>
+        <div
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-top:12px;">
+          <div class="arch-layer">
+            <div class="arch-label">Client Layer</div>
+            <div class="arch-row">
+              <div class="arch-box">Web App (TypeScript/React)</div>
+              <div class="arch-box">Mobile Browser (Responsive)</div>
+              <div class="arch-box">Barcode Scanner (HID)</div>
+            </div>
+          </div>
+          <div class="arch-arrow">↕ HTTPS / WebSocket</div>
+          <div class="arch-layer">
+            <div class="arch-label">API Gateway / Load Balancer</div>
+            <div class="arch-row">
+              <div class="arch-box" style="border-color:var(--accent);">Nginx + Rate Limiting</div>
+              <div class="arch-box" style="border-color:var(--accent);">JWT Middleware</div>
+            </div>
+          </div>
+          <div class="arch-arrow">↕</div>
+          <div class="arch-layer">
+            <div class="arch-label">Backend Microservices (Go)</div>
+            <div class="arch-row">
+              <div class="arch-box">Auth Service</div>
+              <div class="arch-box">Inventory Service</div>
+              <div class="arch-box">Warehouse Service</div>
+              <div class="arch-box">Assembly Service</div>
+              <div class="arch-box">Report Service</div>
+              <div class="arch-box">Sync Service</div>
+            </div>
+          </div>
+          <div class="arch-arrow">↕</div>
+          <div class="arch-layer">
+            <div class="arch-label">Data & Messaging Layer</div>
+            <div class="arch-row">
+              <div class="arch-box" style="border-color:#336791;color:#7ab8e8;">PostgreSQL</div>
+              <div class="arch-box" style="border-color:#d92b3a;color:#ff8888;">Redis Cache</div>
+              <div class="arch-box" style="border-color:#ff6600;color:#ffaa77;">RabbitMQ</div>
+              <div class="arch-box" style="border-color:#a78bfa;color:#c4b5fd;">MinIO Storage</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <h3 class="sub-title">Desain Database (Entitas Utama)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Entitas</th>
+                <th>Kolom Kunci</th>
+                <th>Relasi Utama</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>warehouses</td>
+                <td>id, code, name, address, accurate_location_id</td>
+                <td>1-N: zones, users</td>
+              </tr>
+              <tr>
+                <td>zones</td>
+                <td>id, warehouse_id, code, type, layout_data (JSON)</td>
+                <td>1-N: aisles</td>
+              </tr>
+              <tr>
+                <td>racks</td>
+                <td>id, zone_id, code, levels, capacity</td>
+                <td>1-N: bins</td>
+              </tr>
+              <tr>
+                <td>bins</td>
+                <td>id, rack_id, level, code, max_weight, max_volume</td>
+                <td>N-N: inventory_items</td>
+              </tr>
+              <tr>
+                <td>items</td>
+                <td>id, sku, name, uom, category_id, accurate_item_id</td>
+                <td>1-N: serial_numbers, bom_headers</td>
+              </tr>
+              <tr>
+                <td>serial_numbers</td>
+                <td>id, item_id, serial, status, current_bin_id</td>
+                <td>N-1: bins, 1-N: movement_logs</td>
+              </tr>
+              <tr>
+                <td>inventory_stocks</td>
+                <td>id, item_id, warehouse_id, bin_id, qty, level</td>
+                <td>N-1: items, warehouses, bins</td>
+              </tr>
+              <tr>
+                <td>bom_headers</td>
+                <td>id, product_item_id, version, is_active</td>
+                <td>1-N: bom_lines</td>
+              </tr>
+              <tr>
+                <td>bom_lines</td>
+                <td>id, bom_id, component_item_id, qty</td>
+                <td>N-1: items</td>
+              </tr>
+              <tr>
+                <td>work_orders</td>
+                <td>id, type (assembly/disassembly), bom_id, status, qty</td>
+                <td>N-1: bom_headers, 1-N: wo_components</td>
+              </tr>
+              <tr>
+                <td>stock_opnames</td>
+                <td>id, warehouse_id, type, status, approved_by</td>
+                <td>1-N: opname_lines</td>
+              </tr>
+              <tr>
+                <td>accurate_sync_logs</td>
+                <td>id, entity_type, entity_id, status, payload, error_msg</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 9 — NFR -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s9">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2 class="section-title">Non-Functional Requirements</h2>
+      </div>
+      <div class="content">
+        <div class="nfr-grid">
+          <div class="nfr-card">
+            <div class="nfr-metric">&lt;200ms</div>
+            <div class="nfr-name">Response Time API</div>
+            <div class="nfr-desc">95th percentile untuk endpoint CRUD standar pada kondisi load normal.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">99.5%</div>
+            <div class="nfr-name">Uptime SLA</div>
+            <div class="nfr-desc">Ketersediaan sistem minimal 99.5% (≤3.65 jam downtime/bulan) di luar maintenance
+              window.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">1000+</div>
+            <div class="nfr-name">Concurrent Users</div>
+            <div class="nfr-desc">Sistem harus mampu menangani minimal 1000 pengguna aktif bersamaan tanpa degradasi
+              performa signifikan.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">AES-256</div>
+            <div class="nfr-name">Enkripsi Data</div>
+            <div class="nfr-desc">Data sensitif terenkripsi at-rest (AES-256) dan in-transit (TLS 1.3). Token OAuth
+              disimpan terenkripsi.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">RBAC</div>
+            <div class="nfr-name">Access Control</div>
+            <div class="nfr-desc">Role-Based Access Control granular per modul dan per gudang. Multi-factor
+              authentication untuk super admin.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">WCAG 2.1</div>
+            <div class="nfr-name">Aksesibilitas</div>
+            <div class="nfr-desc">UI memenuhi standar aksesibilitas WCAG 2.1 Level AA untuk mendukung pengguna dengan
+              kebutuhan khusus.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">Daily</div>
+            <div class="nfr-name">Backup & Recovery</div>
+            <div class="nfr-desc">Backup otomatis harian dengan RTO ≤4 jam dan RPO ≤1 jam. Backup disimpan di minimum 2
+              lokasi berbeda.</div>
+          </div>
+          <div class="nfr-card">
+            <div class="nfr-metric">iOS/Android</div>
+            <div class="nfr-name">Mobile Compatibility</div>
+            <div class="nfr-desc">Antarmuka responsif dan fungsional di browser mobile iOS (Safari) dan Android (Chrome)
+              versi terbaru.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 10 — MATRIKS PRIORITAS -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s10">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2 class="section-title">Matriks Prioritas Fitur</h2>
+      </div>
+      <div class="content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Fitur</th>
+                <th>Prioritas</th>
+                <th>Fase</th>
+                <th>Dependensi</th>
+                <th>Estimasi Effort</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Auth, RBAC, Master Data</td>
+                <td><span class="badge badge-high">P0 Critical</span></td>
+                <td>Fase 1</td>
+                <td>—</td>
+                <td>3 minggu</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Barcode Serialized & Label Print</td>
+                <td><span class="badge badge-high">P0 Critical</span></td>
+                <td>Fase 1</td>
+                <td>Master Data</td>
+                <td>3 minggu</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Racking & Bin Management</td>
+                <td><span class="badge badge-high">P0 Critical</span></td>
+                <td>Fase 1</td>
+                <td>Master Data</td>
+                <td>2 minggu</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Goods Receipt & Goods Issue</td>
+                <td><span class="badge badge-high">P0 Critical</span></td>
+                <td>Fase 1</td>
+                <td>Barcode, Bin</td>
+                <td>3 minggu</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Multi Warehouse + Transfer</td>
+                <td><span class="badge badge-high">P0 Critical</span></td>
+                <td>Fase 1</td>
+                <td>GR/GI</td>
+                <td>2 minggu</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Layout Gudang 2D</td>
+                <td><span class="badge badge-mid">P1 High</span></td>
+                <td>Fase 2</td>
+                <td>Racking, Bin</td>
+                <td>4 minggu</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Multilevel Storage (Palet/Dus/Satuan)</td>
+                <td><span class="badge badge-mid">P1 High</span></td>
+                <td>Fase 2</td>
+                <td>Barcode, GR/GI</td>
+                <td>2 minggu</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Sinkronisasi Accurate Online</td>
+                <td><span class="badge badge-mid">P1 High</span></td>
+                <td>Fase 2</td>
+                <td>GR/GI, Transfer</td>
+                <td>5 minggu</td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>BOM & Assembly/Disassembly</td>
+                <td><span class="badge badge-mid">P1 High</span></td>
+                <td>Fase 2</td>
+                <td>Master Data, Stok</td>
+                <td>4 minggu</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>Stock Opname</td>
+                <td><span class="badge badge-mid">P1 High</span></td>
+                <td>Fase 2</td>
+                <td>Barcode, Stok</td>
+                <td>3 minggu</td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td>Dashboard & Reporting Dasar</td>
+                <td><span class="badge badge-mid">P1 High</span></td>
+                <td>Fase 2</td>
+                <td>Semua transaksi</td>
+                <td>3 minggu</td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td>Picking & Packing (Wave)</td>
+                <td><span class="badge badge-low">P2 Medium</span></td>
+                <td>Fase 3</td>
+                <td>GR/GI</td>
+                <td>3 minggu</td>
+              </tr>
+              <tr>
+                <td>13</td>
+                <td>Advanced Analytics & BI</td>
+                <td><span class="badge badge-low">P2 Medium</span></td>
+                <td>Fase 3</td>
+                <td>Reporting</td>
+                <td>4 minggu</td>
+              </tr>
+              <tr>
+                <td>14</td>
+                <td>Notifikasi & Alert Engine</td>
+                <td><span class="badge badge-low">P2 Medium</span></td>
+                <td>Fase 3</td>
+                <td>Semua modul</td>
+                <td>2 minggu</td>
+              </tr>
+              <tr>
+                <td>15</td>
+                <td>Mobile App (PWA)</td>
+                <td><span class="badge badge-blue">P3 Nice</span></td>
+                <td>Fase 3</td>
+                <td>Frontend selesai</td>
+                <td>3 minggu</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 11 — ROADMAP -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s11">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2 class="section-title">Roadmap & Fase Pengembangan</h2>
+      </div>
+      <div class="content">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-phase">Fase 0</div>
+            <div class="tl-title">Discovery & Design</div>
+            <div class="tl-duration">⏱ Durasi: 2 Minggu</div>
+            <div class="tl-deliverables">
+              Wireframing UI/UX, definisi ERD, desain API contract (OpenAPI spec), setup infrastruktur development,
+              review & approval PRD oleh stakeholder.
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-phase">Fase 1 — MVP Core</div>
+            <div class="tl-title">Fondasi WMS</div>
+            <div class="tl-duration">⏱ Durasi: 10 Minggu</div>
+            <div class="tl-deliverables">
+              ✓ Auth & RBAC &nbsp; ✓ Master Data (barang, gudang, bin, kategori) &nbsp; ✓ Barcode serialized &nbsp; ✓
+              Racking & Bin &nbsp; ✓ Goods Receipt &nbsp; ✓ Goods Issue &nbsp; ✓ Stock Transfer &nbsp; ✓ Multi Warehouse
+              dasar &nbsp; ✓ Dashboard KPI dasar
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-phase">Fase 2 — Core Features</div>
+            <div class="tl-title">Fitur Utama & Integrasi</div>
+            <div class="tl-duration">⏱ Durasi: 12 Minggu</div>
+            <div class="tl-deliverables">
+              ✓ Layout gudang 2D &nbsp; ✓ Multilevel storage &nbsp; ✓ BOM & Assembly/Disassembly &nbsp; ✓ Stock Opname
+              (full & cycle count) &nbsp; ✓ Sinkronisasi Accurate Online &nbsp; ✓ Reporting modul lengkap &nbsp; ✓ Audit
+              log &nbsp; ✓ Alert stok minimum
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-phase">Fase 3 — Enhancement</div>
+            <div class="tl-title">Optimasi & Fitur Lanjutan</div>
+            <div class="tl-duration">⏱ Durasi: 8 Minggu</div>
+            <div class="tl-deliverables">
+              ✓ Wave picking &amp; packing &nbsp; ✓ Putaway suggestion engine &nbsp; ✓ Advanced analytics &amp; BI
+              &nbsp; ✓ Mobile PWA optimization &nbsp; ✓ Load testing &amp; performance tuning &nbsp; ✓ User acceptance
+              testing (UAT)
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-phase">Fase 4 — Launch</div>
+            <div class="tl-title">Go-Live & Stabilisasi</div>
+            <div class="tl-duration">⏱ Durasi: 4 Minggu</div>
+            <div class="tl-deliverables">
+              ✓ Data migration dari sistem lama &nbsp; ✓ Training pengguna &nbsp; ✓ Parallel run (sistem baru & lama)
+              &nbsp; ✓ Cutover ke produksi &nbsp; ✓ Hypercare support 2 minggu post-go-live
+            </div>
+          </div>
+        </div>
+        <div class="callout callout-info">
+          <span class="callout-icon">📅</span>
+          <div>Total estimasi pengembangan: <strong>~36 minggu (9 bulan)</strong> dengan tim 3-4 developer full-stack (2
+            Go backend, 1-2 TypeScript frontend), 1 UI/UX designer, dan 1 QA engineer.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 12 — RISIKO -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s12">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <h2 class="section-title">Risiko & Mitigasi</h2>
+      </div>
+      <div class="content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Risiko</th>
+                <th>Probabilitas</th>
+                <th>Dampak</th>
+                <th>Strategi Mitigasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>API Accurate Online berubah / tidak stabil</td>
+                <td><span class="badge badge-mid">Sedang</span></td>
+                <td><span class="badge badge-high">Tinggi</span></td>
+                <td>Buat abstraction layer untuk integrasi. Monitor changelog API Accurate. Sediakan mode offline dengan
+                  sync manual.</td>
+              </tr>
+              <tr>
+                <td>Kompleksitas data migration dari sistem lama</td>
+                <td><span class="badge badge-high">Tinggi</span></td>
+                <td><span class="badge badge-mid">Sedang</span></td>
+                <td>Audit data awal sejak Fase 0. Buat script migration yang dapat diuji berulang. Lakukan dry-run
+                  migration sebelum cutover.</td>
+              </tr>
+              <tr>
+                <td>Resistensi user terhadap sistem baru</td>
+                <td><span class="badge badge-mid">Sedang</span></td>
+                <td><span class="badge badge-mid">Sedang</span></td>
+                <td>Libatkan user dalam UAT. Buat dokumentasi & video tutorial. Sediakan support hotline selama periode
+                  hypercare.</td>
+              </tr>
+              <tr>
+                <td>Performa sistem saat volume transaksi tinggi</td>
+                <td><span class="badge badge-low">Rendah</span></td>
+                <td><span class="badge badge-high">Tinggi</span></td>
+                <td>Load testing sejak Fase 2. Implementasi caching Redis. Database indexing yang optimal. Horizontal
+                  scaling dengan Kubernetes.</td>
+              </tr>
+              <tr>
+                <td>Scope creep dari permintaan fitur tambahan</td>
+                <td><span class="badge badge-high">Tinggi</span></td>
+                <td><span class="badge badge-mid">Sedang</span></td>
+                <td>Strict change management process. Fitur baru masuk backlog dan dievaluasi per sprint. Freeze scope 4
+                  minggu sebelum go-live.</td>
+              </tr>
+              <tr>
+                <td>Ketersediaan infrastruktur / cloud outage</td>
+                <td><span class="badge badge-low">Rendah</span></td>
+                <td><span class="badge badge-high">Tinggi</span></td>
+                <td>Multi-zone deployment. Automated failover. RTO/RPO yang terdefinisi dengan prosedur DR yang diuji
+                  secara berkala.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 13 — ASUMSI -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s13">
+      <div class="section-header">
+        <span class="section-num">13</span>
+        <h2 class="section-title">Asumsi & Dependensi</h2>
+      </div>
+      <div class="content">
+        <h3 class="sub-title">Asumsi</h3>
+        <ul class="checklist">
+          <li>Perusahaan telah memiliki akun Accurate Online aktif dengan paket yang mendukung akses API.</li>
+          <li>Infrastruktur server (cloud/on-premise) tersedia sebelum dimulainya Fase 1.</li>
+          <li>Setiap gudang telah dilengkapi jaringan internet yang stabil untuk operasional real-time.</li>
+          <li>Petugas gudang akan dilengkapi dengan perangkat tablet atau barcode scanner yang kompatibel.</li>
+          <li>Tersedia data master barang yang clean untuk proses migrasi awal.</li>
+          <li>Tim IT internal atau vendor IT dapat mengelola deployment dan pemeliharaan infrastruktur.</li>
+        </ul>
+        <h3 class="sub-title">Dependensi Eksternal</h3>
+        <ul class="checklist">
+          <li><strong>Accurate Online API:</strong> Ketersediaan dan stabilitas API v1 dari Accurate Online.</li>
+          <li><strong>Printer Label:</strong> Printer barcode kompatibel (Zebra ZPL atau TSPL) untuk cetak label.</li>
+          <li><strong>Barcode Scanner:</strong> Scanner yang mendukung HID (keyboard emulation) atau Bluetooth SPP.</li>
+          <li><strong>Cloud Provider:</strong> AWS / GCP / Azure untuk hosting production environment.</li>
+          <li><strong>CDN:</strong> Untuk distribusi aset frontend dan optimasi performa global.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SECTION 14 — GLOSARIUM -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="section" id="s14">
+      <div class="section-header">
+        <span class="section-num">14</span>
+        <h2 class="section-title">Glosarium</h2>
+      </div>
+      <div class="content">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Istilah</th>
+                <th>Definisi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>WMS</td>
+                <td>Warehouse Management System — sistem untuk mengelola operasional gudang secara digital.</td>
+              </tr>
+              <tr>
+                <td>SKU</td>
+                <td>Stock Keeping Unit — kode unik untuk mengidentifikasi setiap jenis barang.</td>
+              </tr>
+              <tr>
+                <td>Serial Number</td>
+                <td>Nomor unik yang diberikan kepada setiap unit barang individual dalam sistem serialized tracking.
+                </td>
+              </tr>
+              <tr>
+                <td>BOM</td>
+                <td>Bill of Materials — daftar komponen dan jumlah yang dibutuhkan untuk membuat satu produk jadi.</td>
+              </tr>
+              <tr>
+                <td>GRN</td>
+                <td>Goods Receipt Note — dokumen penerimaan barang masuk ke gudang.</td>
+              </tr>
+              <tr>
+                <td>DO</td>
+                <td>Delivery Order — dokumen pengeluaran barang dari gudang.</td>
+              </tr>
+              <tr>
+                <td>Bin</td>
+                <td>Unit terkecil dari lokasi penyimpanan dalam struktur rack — slot spesifik di rak.</td>
+              </tr>
+              <tr>
+                <td>Putaway</td>
+                <td>Proses menempatkan barang yang baru diterima ke lokasi penyimpanan yang ditentukan.</td>
+              </tr>
+              <tr>
+                <td>Picking</td>
+                <td>Proses mengambil barang dari lokasi penyimpanan sesuai order untuk diproses lebih lanjut.</td>
+              </tr>
+              <tr>
+                <td>FIFO</td>
+                <td>First In First Out — barang yang pertama masuk harus pertama keluar.</td>
+              </tr>
+              <tr>
+                <td>FEFO</td>
+                <td>First Expired First Out — barang dengan tanggal kadaluarsa terdekat harus pertama keluar.</td>
+              </tr>
+              <tr>
+                <td>Cycle Count</td>
+                <td>Metode stock opname parsial — menghitung sebagian inventori secara berkala tanpa menghentikan
+                  operasi.</td>
+              </tr>
+              <tr>
+                <td>HPP</td>
+                <td>Harga Pokok Produksi/Pembelian — biaya yang dikeluarkan untuk memproduksi atau membeli barang.</td>
+              </tr>
+              <tr>
+                <td>Accurate Online</td>
+                <td>Software akuntansi berbasis cloud yang digunakan sebagai sistem ERP/keuangan perusahaan.</td>
+              </tr>
+              <tr>
+                <td>DLQ</td>
+                <td>Dead Letter Queue — antrian untuk pesan yang gagal diproses setelah beberapa kali percobaan retry.
+                </td>
+              </tr>
+              <tr>
+                <td>RTO</td>
+                <td>Recovery Time Objective — target waktu maksimum sistem dapat dipulihkan setelah gangguan.</td>
+              </tr>
+              <tr>
+                <td>RPO</td>
+                <td>Recovery Point Objective — target maksimum data yang boleh hilang (dalam satuan waktu) saat terjadi
+                  kegagalan.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="doc-footer">
+      <div class="footer-brand">WMS · PRD v1.0</div>
+      <div class="footer-note">// Dokumen ini bersifat rahasia dan hanya untuk internal. Revisi sesuai kebutuhan proyek.
+      </div>
+    </footer>
+
+    <button id="scroll-to-top" class="scroll-to-top" aria-label="Back to top">
+      ↑
+    </button>
+  </div>
+</body>
+
+</html>

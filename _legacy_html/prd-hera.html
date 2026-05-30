@@ -1,0 +1,3086 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Architecture & Schema PRD - HERA</title>
+
+  <!-- Font Imports from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Syne:wght@400..800&family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Link to the main stylesheet provided by user -->
+  <link rel="stylesheet" href="assets/styles.css">
+  <!-- Link to shared interaction script -->
+  <script src="assets/script.js" defer></script>
+</head>
+
+<body>
+  <a href="index.html" style="position: fixed; bottom: 24px; left: 24px; z-index: 9999; padding: 10px 20px; background: #6366f1; color: white; border-radius: 8px; text-decoration: none; font-family: 'Syne', sans-serif; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">&larr; Back</a>
+  <div class="page-wrap">
+    <button id="theme-toggle-btn" class="theme-toggle">
+      <span id="theme-icon">☀️</span>
+      <span id="theme-text">Light Mode</span>
+    </button>
+
+    <!-- Header Block -->
+    <header class="doc-header">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <button id="toc-burger" class="burger-btn" aria-label="Toggle Table of Contents">
+          ☰
+        </button>
+        <div class="header-badge" style="margin-bottom: 0;">HERA Product Requirements Document</div>
+      </div>
+      <h1 class="doc-title">Arsitektur & Spesifikasi Database Schema</h1>
+      <p class="doc-subtitle">Dokumentasi resmi spesifikasi teknis database, diagram schema relasional, detail tipe data
+        field, dan konfigurasi relasi GORM (Object Relational Mapping) di dalam HERA.</p>
+
+      <!-- Metadata Grid cards -->
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-label">Engine RDBMS</div>
+          <div class="meta-value">PostgreSQL 15+</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Total Schema</div>
+          <div class="meta-value accent">4 Schemas</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Jumlah Tabel</div>
+          <div class="meta-value">32 Tables + 1 View</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Status Sinkronisasi</div>
+          <div class="meta-value">GORM AutoMigrate</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Left Drawer TOC -->
+    <div class="toc-overlay" id="toc-overlay"></div>
+    <nav class="toc" id="toc-drawer">
+      <div class="drawer-header">
+        <h3
+          style="font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: -0.01em;">
+          Daftar Isi</h3>
+      </div>
+
+      <div style="padding: 20px 0;">
+        <!-- Section 1: Ringkasan -->
+        <div style="margin-bottom: 24px;">
+          <h4
+            style="font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: var(--accent); margin-bottom: 8px; padding: 0 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+            1. Pengantar</h4>
+          <a href="#architecture-summary" class="toc-link-item">
+            <span style="font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim);">1.1</span>
+            Ringkasan
+            Arsitektur
+          </a>
+        </div>
+
+        <!-- Section 2: Public Schema -->
+        <div style="margin-bottom: 24px;">
+          <h4
+            style="font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: var(--accent); margin-bottom: 8px; padding: 0 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+            2. Schema public (Core)</h4>
+          <a href="#t_cfg_regions" class="toc-link-item">t_cfg_regions</a>
+          <a href="#t_cfg_divisions" class="toc-link-item">t_cfg_divisions</a>
+          <a href="#t_cfg_departments" class="toc-link-item">t_cfg_departments</a>
+          <a href="#t_cfg_roles" class="toc-link-item">t_cfg_roles</a>
+          <a href="#t_cfg_permissions" class="toc-link-item">t_cfg_permissions</a>
+          <a href="#t_cfg_role_permissions" class="toc-link-item">t_cfg_role_permissions</a>
+          <a href="#t_cfg_menus" class="toc-link-item">t_cfg_menus</a>
+          <a href="#t_cfg_external_apps" class="toc-link-item">t_cfg_external_apps</a>
+          <a href="#t_core_users" class="toc-link-item">t_core_users</a>
+          <a href="#t_core_user_roles" class="toc-link-item">t_core_user_roles</a>
+          <a href="#t_core_approvals" class="toc-link-item">t_core_approvals</a>
+          <a href="#t_core_approval_steps" class="toc-link-item">t_core_approval_steps</a>
+          <a href="#t_core_approval_logs" class="toc-link-item">t_core_approval_logs</a>
+          <a href="#t_md_customers" class="toc-link-item">t_md_customers</a>
+          <a href="#t_md_provinces" class="toc-link-item">t_md_provinces</a>
+          <a href="#t_md_cities" class="toc-link-item">t_md_cities</a>
+          <a href="#v_md_customers" class="toc-link-item"
+            style="color: var(--accent2); font-weight: 600;">v_md_customers
+            (View)</a>
+        </div>
+
+        <!-- Section 3: Moneta Schema -->
+        <div style="margin-bottom: 24px;">
+          <h4
+            style="font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: var(--accent3); margin-bottom: 8px; padding: 0 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+            3. Schema moneta</h4>
+          <a href="#t_ar_invoices" class="toc-link-item">t_ar_invoices</a>
+          <a href="#t_ar_reminder_configs" class="toc-link-item">t_ar_reminder_configs</a>
+          <a href="#t_ar_special_customers" class="toc-link-item">t_ar_special_customers</a>
+          <a href="#t_ar_invoice_special_due_dates" class="toc-link-item">t_ar_invoice_special_due_dates</a>
+          <a href="#t_ps_loans" class="toc-link-item">t_ps_loans</a>
+          <a href="#t_ps_settlement_categories" class="toc-link-item">t_ps_settlement_categories</a>
+          <a href="#t_ps_settlements" class="toc-link-item">t_ps_settlements</a>
+          <a href="#t_ps_settlement_details" class="toc-link-item">t_ps_settlement_details</a>
+          <a href="#t_ps_settlement_logs" class="toc-link-item">t_ps_settlement_logs</a>
+        </div>
+
+        <!-- Section 4: Ares Schema -->
+        <div style="margin-bottom: 24px;">
+          <h4
+            style="font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: var(--success); margin-bottom: 8px; padding: 0 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+            4. Schema ares</h4>
+          <a href="#t_eqp_brands" class="toc-link-item">t_eqp_brands</a>
+          <a href="#t_eqp_categories" class="toc-link-item">t_eqp_categories</a>
+          <a href="#t_eqp_models" class="toc-link-item">t_eqp_models</a>
+          <a href="#t_eqp_machines" class="toc-link-item">t_eqp_machines</a>
+        </div>
+
+        <!-- Section 5: Logs Schema -->
+        <div style="margin-bottom: 24px;">
+          <h4
+            style="font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: var(--danger); margin-bottom: 8px; padding: 0 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+            5. Schema application_logs</h4>
+          <a href="#t_logs_users" class="toc-link-item">t_logs_users</a>
+          <a href="#t_logs_system_syncs" class="toc-link-item">t_logs_system_syncs</a>
+          <a href="#t_logs_ar_notifications" class="toc-link-item">t_logs_ar_notifications</a>
+          <a href="#t_logs_system_notifications" class="toc-link-item">t_logs_system_notifications</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Schema Search Box -->
+    <div class="search-box-container">
+      <svg class="search-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" x2="16.65" y1="21" y2="16.65"></line>
+      </svg>
+      <input type="text" id="schemaSearchInput" class="search-input"
+        placeholder="Cari nama tabel, schema, field, atau penjelasan relasi database...">
+    </div>
+
+    <!-- Section: 1. Overview Arsitektur -->
+    <section class="section" id="architecture-summary">
+      <header class="section-header">
+        <div class="section-num">1.0</div>
+        <h2 class="section-title">Ringkasan Arsitektur & Hubungan Antar Schema</h2>
+      </header>
+      <div class="content">
+        <p>Database Hera terbagi ke dalam beberapa schema PostgreSQL yang saling terintegrasi. Hal ini
+          mengisolasi beban kerja logis, mempermudah manajemen hak akses di tingkat database (seperti
+          Supabase/PostgreSQL), serta menyusun domain logic dengan rapi:</p>
+
+        <div class="arch-grid-dashboard">
+          <!-- Card: Public Schema -->
+          <div class="arch-card-premium public">
+            <div class="arch-card-title">public</div>
+            <div class="arch-card-count">16 Tabel • 1 View</div>
+            <p class="card-desc">Domain inti sistem yang berisi konfigurasi menu, pembagian geografis (Region), data
+              departemen, struktur Role/Permission (RBAC), otentikasi User, approval workflow general, serta data
+              regional pelanggan.</p>
+          </div>
+          <!-- Card: Moneta Schema -->
+          <div class="arch-card-premium moneta">
+            <div class="arch-card-title">moneta</div>
+            <div class="arch-card-count">9 Tabel</div>
+            <p class="card-desc">Domain finansial yang mengelola sinkronisasi piutang (AR Invoices) dari Accurate Online
+              (AOL), konfigurasi limit pengingat tagihan otomatis, pinjaman sementara (PS Loans), dan settlement kas
+              pengeluaran karyawan.</p>
+          </div>
+          <!-- Card: Ares Schema -->
+          <div class="arch-card-premium ares">
+            <div class="arch-card-title">ares</div>
+            <div class="arch-card-count">4 Tabel</div>
+            <p class="card-desc">Domain manajemen peralatan dan armada mesin (Machine solutions), melacak manufaktur,
+              model, serial number mesin, status jam operasi (Hour Meter), serta lokasi kerja (site) masing-masing unit.
+            </p>
+          </div>
+          <!-- Card: Logs Schema -->
+          <div class="arch-card-premium logs">
+            <div class="arch-card-title">application_logs</div>
+            <div class="arch-card-count">4 Tabel</div>
+            <p class="card-desc">Domain audit log yang didedikasikan untuk pencatatan riwayat aktivitas pengguna (User
+              Activity), sinkronisasi scheduler system ke AOL, logs pengiriman reminder invoice, serta notifikasi
+              terpusat (Helios).</p>
+          </div>
+        </div>
+
+        <h3 class="sub-title">Relasi dan Ketergantungan Schema</h3>
+        <p>Sistem ini dirancang dengan prinsip modularitas tinggi namun terhubung erat pada entitas User dan Customer:
+        </p>
+        <ul class="checklist">
+          <li><strong>Otentikasi & Keamanan (RBAC):</strong> Hubungan multi-to-multi antara <code>t_core_users</code>,
+            <code>t_cfg_roles</code>, dan <code>t_cfg_permissions</code> dikontrol melalui tabel relasional.
+          </li>
+          <li><strong>Alur Kerja Persetujuan (General Approvals):</strong> Modul <code>t_core_approvals</code>
+            dihubungkan secara dinamis ke entitas modul lain (misal <code>moneta.t_ps_loans</code> atau
+            <code>moneta.t_ps_settlements</code>) lewat field <code>Module</code> dan <code>EntityID</code> yang
+            berfungsi sebagai Polymorphic Relation.
+          </li>
+          <li><strong>Integrasi Pihak Ketiga (Accurate Online):</strong> Sinkronisasi data diatur secara berkala dengan
+            memetakan ID unik AOL (seperti <code>aol_id</code>, <code>customer_aol_id</code>) di tabel Master Data
+            <code>t_md_customers</code> dan <code>moneta.t_ar_invoices</code>.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+      <h2 style="font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--text);">Katalog Schema
+        & Struktur Tabel</h2>
+      <span class="schema-pill schema-public">PUBLIC SCHEMA</span>
+    </div>
+
+    <!-- TABEL 1: t_cfg_regions -->
+    <section class="section" id="t_cfg_regions">
+      <header class="section-header">
+        <div class="section-num">2.1</div>
+        <h2 class="section-title">public.t_cfg_regions</h2>
+      </header>
+      <div class="content">
+        <p>Menyimpan data wilayah geografis operasional perusahaan (contoh: HQ, Sumatra, Java) untuk pengelompokan
+          penugasan user dan alokasi aset.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik bertipe UUID V4 generator bawaan.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>Waktu pembuatan data awal.</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>Waktu pembaruan data terakhir.</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Waktu penghapusan logis (GORM Soft Delete).</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Kode unik region (contoh: "HQ", "SMT", "JAVA").</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama lengkap wilayah operasional (contoh: "Java Region").</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 2: t_cfg_divisions -->
+    <section class="section" id="t_cfg_divisions">
+      <header class="section-header">
+        <div class="section-num">2.2</div>
+        <h2 class="section-title">public.t_cfg_divisions</h2>
+      </header>
+      <div class="content">
+        <p>Mendefinisikan divisi tingkat atas di internal organisasi perusahaan (seperti Operations, Human Capital,
+          ICT).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID Divisi unik.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>Timestamp dibuat.</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>Timestamp diupdate.</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Soft delete index.</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Kode divisi organisasi (misal: "OPRT", "HC", "ICT").</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama divisi (misal: "Operations Division").</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 3: t_cfg_departments -->
+    <section class="section" id="t_cfg_departments">
+      <header class="section-header">
+        <div class="section-num">2.3</div>
+        <h2 class="section-title">public.t_cfg_departments</h2>
+      </header>
+      <div class="content">
+        <p>Mendata departemen spesifik di bawah kendali Divisi tertentu (misal: Accounting dan Finance di bawah divisi
+          Operations).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik departemen.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Kode unik departemen (contoh: "FINN", "TAX", "AR").</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama departemen (contoh: "Account Receivable Department").</td>
+              </tr>
+              <tr>
+                <td>division_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi Foreign Key ke <a class="relation-link" href="#t_cfg_divisions">t_cfg_divisions(id)</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 4: t_cfg_roles -->
+    <section class="section" id="t_cfg_roles">
+      <header class="section-header">
+        <div class="section-num">2.4</div>
+        <h2 class="section-title">public.t_cfg_roles</h2>
+      </header>
+      <div class="content">
+        <p>Tabel Master Role untuk sistem hak akses Role-Based Access Control (RBAC).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID Role unik.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Kode identifikasi role (contoh: "super_admin", "staff", "users").</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama tampilan role.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 5: t_cfg_permissions -->
+    <section class="section" id="t_cfg_permissions">
+      <header class="section-header">
+        <div class="section-num">2.5</div>
+        <h2 class="section-title">public.t_cfg_permissions</h2>
+      </header>
+      <div class="content">
+        <p>Tabel master permissions detail dari aksi/action spesifik di aplikasi (contoh: view-regions,
+          moneta.ps.approve).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID Permission unik.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>String permission key (contoh: "view-permissions", "ares.view").</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Penjelasan/nama deskripsi permission.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 6: t_cfg_role_permissions -->
+    <section class="section" id="t_cfg_role_permissions">
+      <header class="section-header">
+        <div class="section-num">2.6</div>
+        <h2 class="section-title">public.t_cfg_role_permissions</h2>
+      </header>
+      <div class="content">
+        <p>Tabel pivot relasi Many-To-Many yang menghubungkan Role dengan sekumpulan hak akses Permission.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>role_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_cfg_roles">t_cfg_roles(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>permission_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_cfg_permissions">t_cfg_permissions(id)</a>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 7: t_cfg_menus -->
+    <section class="section" id="t_cfg_menus">
+      <header class="section-header">
+        <div class="section-num">2.7</div>
+        <h2 class="section-title">public.t_cfg_menus</h2>
+      </header>
+      <div class="content">
+        <p>Mendefinisikan navigasi menu dynamic untuk front-end (baik untuk Creative-X maupun Talos).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID Menu unik.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama tampilan menu item (contoh: "Dashboard", "Master Data").</td>
+              </tr>
+              <tr>
+                <td>route</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Path URL endpoint navigasi frontend (contoh: "/master-data/customers").</td>
+              </tr>
+              <tr>
+                <td>icon</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Kode nama icon Lucide React (contoh: "LayoutDashboard").</td>
+              </tr>
+              <tr>
+                <td>parent_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Self-referencing Foreign Key ke <a class="relation-link" href="#t_cfg_menus">t_cfg_menus(id)</a>
+                  untuk struktur hirarki / sub-menu. Nullable jika root level.</td>
+              </tr>
+              <tr>
+                <td>order</td>
+                <td>INTEGER</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Urutan pengurutan tampilan menu (0, 1, 2, ...).</td>
+              </tr>
+              <tr>
+                <td>is_active</td>
+                <td>BOOLEAN</td>
+                <td><span class="gorm-tag">DEFAULT: true</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Status aktifasi visibilitas menu.</td>
+              </tr>
+              <tr>
+                <td>required_permission</td>
+                <td>VARCHAR(128)</td>
+                <td>-</td>
+                <td>String code permission wajib untuk mengakses menu ini. Nullable.</td>
+              </tr>
+              <tr>
+                <td>application_name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">DEFAULT: 'creative-x'</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Tujuan aplikasi menu ('creative-x', 'talos', 'all'). Mencegah kebocoran navigasi antar-aplikasi.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 8: t_cfg_external_apps -->
+    <section class="section" id="t_cfg_external_apps">
+      <header class="section-header">
+        <div class="section-num">2.8</div>
+        <h2 class="section-title">public.t_cfg_external_apps</h2>
+      </header>
+      <div class="content">
+        <p>Mencatat credential dan token sinkronisasi integrasi dengan pihak ketiga, saat ini difokuskan untuk modul
+          Accurate Online (AOL).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik eksternal app.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>code</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Kode identifikasi (contoh: "accurate_online").</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama aplikasi eksternal.</td>
+              </tr>
+              <tr>
+                <td>client_id</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Client ID API AOL.</td>
+              </tr>
+              <tr>
+                <td>client_secret</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Client Secret API AOL.</td>
+              </tr>
+              <tr>
+                <td>access_token</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Bearer Token OAuth yang aktif saat ini.</td>
+              </tr>
+              <tr>
+                <td>refresh_token</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Token untuk memperbarui Access Token OAuth.</td>
+              </tr>
+              <tr>
+                <td>expires_at</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Waktu kadaluarsa access token.</td>
+              </tr>
+              <tr>
+                <td>aol_database_id</td>
+                <td>VARCHAR(128)</td>
+                <td>-</td>
+                <td>ID Database Accurate Online milik perusahaan target.</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">DEFAULT: 'active'</span></td>
+                <td>Status integrasi aktif/nonaktif.</td>
+              </tr>
+              <tr>
+                <td>is_automation_enabled</td>
+                <td>BOOLEAN</td>
+                <td><span class="gorm-tag">DEFAULT: false</span></td>
+                <td>Menentukan apakah sinkronisasi berjalan otomatis via scheduler internal.</td>
+              </tr>
+              <tr>
+                <td>sync_time</td>
+                <td>VARCHAR(10)</td>
+                <td><span class="gorm-tag">DEFAULT: '08:00'</span></td>
+                <td>Waktu harian sinkronisasi dieksekusi (format HH:MM).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 9: t_core_users -->
+    <section class="section" id="t_core_users">
+      <header class="section-header">
+        <div class="section-num">2.9</div>
+        <h2 class="section-title">public.t_core_users</h2>
+      </header>
+      <div class="content">
+        <p>Tabel master pengguna aplikasi yang mengkonsolidasikan data autentikasi (Auth) dengan modul SDM/HRIS dan
+          lisensi Accurate Online.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID User unik (UUID).</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Soft delete index.</td>
+              </tr>
+              <tr>
+                <td>username</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama pengguna untuk login.</td>
+              </tr>
+              <tr>
+                <td>email</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Alamat email korespondensi utama.</td>
+              </tr>
+              <tr>
+                <td>password_hash</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Hash password terenkripsi bcrypt (disembunyikan dari JSON).</td>
+              </tr>
+              <tr>
+                <td>full_name</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama lengkap pengguna.</td>
+              </tr>
+              <tr>
+                <td>phone_number</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Nomor handphone/WhatsApp aktif. Nullable.</td>
+              </tr>
+              <tr>
+                <td>is_active</td>
+                <td>BOOLEAN</td>
+                <td><span class="gorm-tag">DEFAULT: true</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Status aktifasi akun user.</td>
+              </tr>
+              <tr>
+                <td>last_login_at</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Waktu login terakhir user. Nullable.</td>
+              </tr>
+              <tr>
+                <td>region_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_cfg_regions">t_cfg_regions(id)</a>. Nullable.</td>
+              </tr>
+              <tr>
+                <td>division_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_cfg_divisions">t_cfg_divisions(id)</a>. Nullable.
+                </td>
+              </tr>
+              <tr>
+                <td>department_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_cfg_departments">t_cfg_departments(id)</a>. Nullable.
+                </td>
+              </tr>
+              <tr>
+                <td>nik</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">UNIQUE</span></td>
+                <td>Nomor Induk Karyawan resmi (HRIS). Nullable.</td>
+              </tr>
+              <tr>
+                <td>dob</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Tanggal Lahir (Date of Birth). Nullable.</td>
+              </tr>
+              <tr>
+                <td>join_date</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Tanggal masuk kerja pertama kali. Nullable.</td>
+              </tr>
+              <tr>
+                <td>supervisor_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Self-referencing Foreign Key ke <a class="relation-link" href="#t_core_users">t_core_users(id)</a>
+                  untuk atasan langsung.</td>
+              </tr>
+              <tr>
+                <td>gender</td>
+                <td>VARCHAR(16)</td>
+                <td>-</td>
+                <td>Jenis kelamin user.</td>
+              </tr>
+              <tr>
+                <td>avatar_url</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Link asset foto profile user. Nullable.</td>
+              </tr>
+              <tr>
+                <td>job_title</td>
+                <td>VARCHAR(128)</td>
+                <td>-</td>
+                <td>Nama jabatan (contoh: "Mechanics Analyst", "AR Staff").</td>
+              </tr>
+              <tr>
+                <td>npwp</td>
+                <td>VARCHAR(32)</td>
+                <td>-</td>
+                <td>Nomor Pokok Wajib Pajak karyawan. Nullable.</td>
+              </tr>
+              <tr>
+                <td>user_level</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">DEFAULT: 'Staff'</span></td>
+                <td>Pangkat/Level Jabatan untuk penentuan approval level (misal: Staff, Supervisor, Manager, Director).
+                </td>
+              </tr>
+              <tr>
+                <td>aol_user_id</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">UNIQUE</span></td>
+                <td>ID unik pengguna AOL (Accurate Online). Nullable.</td>
+              </tr>
+              <tr>
+                <td>aol_supplier_id</td>
+                <td>VARCHAR(128)</td>
+                <td>-</td>
+                <td>Pemetaan ID Supplier AOL untuk pembayaran reimbursement. Nullable.</td>
+              </tr>
+              <tr>
+                <td>hris_user_id</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">UNIQUE</span></td>
+                <td>ID unik sinkronisasi dengan database HRIS terpisah. Nullable.</td>
+              </tr>
+              <tr>
+                <td>sync_metadata</td>
+                <td>JSONB</td>
+                <td>-</td>
+                <td>JSON object dinamis penyimpan detail sinkronisasi HRIS/AOL tambahan.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 10: t_core_user_roles -->
+    <section class="section" id="t_core_user_roles">
+      <header class="section-header">
+        <div class="section-num">2.10</div>
+        <h2 class="section-title">public.t_core_user_roles</h2>
+      </header>
+      <div class="content">
+        <p>Tabel pivot relasi Many-To-Many yang memetakan User ke satu atau lebih Roles.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>user_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span> <span class="gorm-tag">ON DELETE CASCADE</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_core_users">t_core_users(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>role_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span> <span class="gorm-tag">ON DELETE CASCADE</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_cfg_roles">t_cfg_roles(id)</a>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 11: t_core_approvals -->
+    <section class="section" id="t_core_approvals">
+      <header class="section-header">
+        <div class="section-num">2.11</div>
+        <h2 class="section-title">public.t_core_approvals</h2>
+      </header>
+      <div class="content">
+        <p>Tabel utama pengajuan approval transaksi dari berbagai macam modul aplikasi secara terpusat (polimorfik).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik Approval Request.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>module</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama modul asal pengajuan (contoh: "moneta_ps_loan", "moneta_settlement").</td>
+              </tr>
+              <tr>
+                <td>entity_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>ID ID baris transaksi tabel asal yang membutuhkan persetujuan (contoh ID pinjaman).</td>
+              </tr>
+              <tr>
+                <td>requester_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>User ID pembuat pengajuan. Relasi FK ke <a class="relation-link"
+                    href="#t_core_users">t_core_users(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>current_step</td>
+                <td>INTEGER</td>
+                <td><span class="gorm-tag">DEFAULT: 1</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Nomor urutan tahap approval yang sedang ditunggu (contoh: Step 1, Step 2).</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(24)</td>
+                <td><span class="gorm-tag">DEFAULT: 'pending'</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Status global pengajuan (values: 'pending', 'approved', 'rejected', 'canceled').</td>
+              </tr>
+              <tr>
+                <td>description</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Detail tambahan atau ringkasan pengajuan oleh sistem/pemohon.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 12: t_core_approval_steps -->
+    <section class="section" id="t_core_approval_steps">
+      <header class="section-header">
+        <div class="section-num">2.12</div>
+        <h2 class="section-title">public.t_core_approval_steps</h2>
+      </header>
+      <div class="content">
+        <p>Definisi skenario / tahapan persetujuan dinamis per modul (contoh: Modul Moneta PS loan, Step 1 harus
+          disetujui Supervisor, Step 2 disetujui Finance Manager).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik Step.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>module</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama modul target (contoh: "moneta_ps_loan").</td>
+              </tr>
+              <tr>
+                <td>step_number</td>
+                <td>INTEGER</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nomor urut langkah persetujuan (1, 2, 3, ...).</td>
+              </tr>
+              <tr>
+                <td>approver_role_id</td>
+                <td>UUID</td>
+                <td>-</td>
+                <td>Spesifik role yang boleh menyetujui tahap ini. FK ke <a class="relation-link"
+                    href="#t_cfg_roles">t_cfg_roles(id)</a>. Nullable.</td>
+              </tr>
+              <tr>
+                <td>approver_user_id</td>
+                <td>UUID</td>
+                <td>-</td>
+                <td>Spesifik individu yang ditunjuk menyetujui tahap ini. FK ke <a class="relation-link"
+                    href="#t_core_users">t_core_users(id)</a>. Nullable.</td>
+              </tr>
+              <tr>
+                <td>use_supervisor</td>
+                <td>BOOLEAN</td>
+                <td><span class="gorm-tag">DEFAULT: false</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Flag dinamis. Jika true, maka atasan langsung pemohon (dari <code>t_core_users.supervisor_id</code>)
+                  yang wajib menyetujui.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 13: t_core_approval_logs -->
+    <section class="section" id="t_core_approval_logs">
+      <header class="section-header">
+        <div class="section-num">2.13</div>
+        <h2 class="section-title">public.t_core_approval_logs</h2>
+      </header>
+      <div class="content">
+        <p>Mencatat riwayat log dari setiap tindakan persetujuan (Approve, Reject, Revise) pada setiap step.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik log approval.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>approval_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke pengajuan utama <a class="relation-link"
+                    href="#t_core_approvals">t_core_approvals(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>step_number</td>
+                <td>INTEGER</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nomor langkah persetujuan saat aksi diambil.</td>
+              </tr>
+              <tr>
+                <td>approver_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>User ID yang melakukan aksi. FK ke <a class="relation-link"
+                    href="#t_core_users">t_core_users(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>action</td>
+                <td>VARCHAR(24)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Tindakan yang diambil (values: 'approve', 'reject', 'revise').</td>
+              </tr>
+              <tr>
+                <td>comment</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Catatan atau alasan persetujuan/penolakan oleh approver.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 14: t_md_customers -->
+    <section class="section" id="t_md_customers">
+      <header class="section-header">
+        <div class="section-num">2.14</div>
+        <h2 class="section-title">public.t_md_customers</h2>
+      </header>
+      <div class="content">
+        <p>Tabel Master Data pelanggan yang disinkronisasi dari database Accurate Online untuk validasi pembuatan
+          tagihan dan tracking invoice.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik customer lokal.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>aol_id</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">UNIQUE INDEX</span></td>
+                <td>ID Unik pelanggan di Accurate Online. Kunci pemetaan sinkronisasi utama.</td>
+              </tr>
+              <tr>
+                <td>customer_no</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nomor pelanggan eksternal (contoh: "CUST-00293").</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama badan usaha/nama pelanggan (contoh: "PT Multi Crane Perkasa").</td>
+              </tr>
+              <tr>
+                <td>email</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Email utama pengiriman invoice reminder.</td>
+              </tr>
+              <tr>
+                <td>phone</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Nomor telepon/WhatsApp perusahaan pelanggan.</td>
+              </tr>
+              <tr>
+                <td>address</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Alamat lengkap domisili penagihan.</td>
+              </tr>
+              <tr>
+                <td>npwp</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Nomor NPWP korporat pelanggan.</td>
+              </tr>
+              <tr>
+                <td>category</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Kategori pasar/jenis industri pelanggan.</td>
+              </tr>
+              <tr>
+                <td>province_id</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Referensi wilayah provinsi pelanggan.</td>
+              </tr>
+              <tr>
+                <td>city_id</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Referensi wilayah kota pelanggan.</td>
+              </tr>
+              <tr>
+                <td>tax_office</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Kantor Pelayanan Pajak (KPP) pendaftaran NPWP.</td>
+              </tr>
+              <tr>
+                <td>pkp</td>
+                <td>BOOLEAN</td>
+                <td><span class="gorm-tag">DEFAULT: false</span></td>
+                <td>Apakah pelanggan berstatus Pengusaha Kena Pajak (PKP) aktif.</td>
+              </tr>
+              <tr>
+                <td>credit_limit</td>
+                <td>DECIMAL(20,2)</td>
+                <td><span class="gorm-tag">DEFAULT: 0</span></td>
+                <td>Batas nominal limit piutang belanja pelanggan.</td>
+              </tr>
+              <tr>
+                <td>sync_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>Waktu pembaruan sinkronisasi terakhir dari AOL API.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 15: t_md_provinces -->
+    <section class="section" id="t_md_provinces">
+      <header class="section-header">
+        <div class="section-num">2.15</div>
+        <h2 class="section-title">public.t_md_provinces</h2>
+      </header>
+      <div class="content">
+        <p>Master data wilayah administrasi provinsi Indonesia untuk standarisasi input lokasi pelanggan dan site
+          armada.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik provinsi.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">UNIQUE</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama lengkap Provinsi (contoh: "DKI Jakarta", "Jawa Barat").</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 16: t_md_cities -->
+    <section class="section" id="t_md_cities">
+      <header class="section-header">
+        <div class="section-num">2.16</div>
+        <h2 class="section-title">public.t_md_cities</h2>
+      </header>
+      <div class="content">
+        <p>Master data Kota/Kabupaten di bawah kendali Provinsi tertentu.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik Kota.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>province_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_md_provinces">t_md_provinces(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama Kota/Kabupaten (contoh: "Jakarta Barat", "Bandung").</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 1: v_md_customers -->
+    <section class="section" id="v_md_customers">
+      <header class="section-header" style="border-left-color: var(--accent2);">
+        <div class="section-num"
+          style="background: rgba(56, 240, 192, 0.1); border-color: rgba(56, 240, 192, 0.3); color: var(--accent2);">
+          VIEW</div>
+        <h2 class="section-title" style="color: var(--accent2);">public.v_md_customers (Database View)</h2>
+      </header>
+      <div class="content">
+        <p>View khusus database yang menggabungkan master data customer dengan kalkulasi total outstanding piutang yang
+          dikumpulkan dinamis dari invoice yang belum lunas (UNPAID/PARTIAL) di modul moneta.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">💡</div>
+          <p class="callout-text"><strong>Informasi Teknis:</strong> View ini mempermudah proses query di frontend untuk
+            menampilkan dasboard piutang tanpa perlu melakukan JOIN/SUM berat berulang kali di tingkat REST API.</p>
+        </div>
+
+        <h4 class="sub-sub-title">Query SQL Definisi View:</h4>
+        <pre
+          style="background: var(--surface2); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); overflow-x: auto; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 12px 0;">
+SELECT 
+    c.id, c.created_at, c.updated_at, c.deleted_at,
+    c.aol_id, c.customer_no, c.name, c.email, c.phone, c.address,
+    c.npwp, c.category, c.province_id, c.city_id, c.tax_office,
+    c.pkp, c.credit_limit, c.sync_at,
+    COALESCE(inv.total_outstanding, 0) as total_outstanding,
+    COALESCE(inv.total_overdue, 0) as total_overdue,
+    COALESCE(inv.open_invoice_count, 0) as open_invoice_count
+FROM 
+    t_md_customers c
+LEFT JOIN (
+    SELECT 
+        customer_aol_id,
+        SUM(balance_amount) as total_outstanding,
+        SUM(CASE WHEN due_date &lt; CURRENT_DATE THEN balance_amount ELSE 0 END) as total_overdue,
+        COUNT(*) as open_invoice_count
+    FROM 
+        moneta.t_ar_invoices
+    WHERE 
+        status != 'PAID'
+    GROUP BY 
+        customer_aol_id
+) inv ON c.aol_id = inv.customer_aol_id;</pre>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+      <h2 style="font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--text);">Katalog Schema
+        & Struktur Tabel</h2>
+      <span class="schema-pill schema-moneta">MONETA SCHEMA</span>
+    </div>
+
+    <!-- TABEL 17: moneta.t_ar_invoices -->
+    <section class="section" id="t_ar_invoices">
+      <header class="section-header">
+        <div class="section-num">3.1</div>
+        <h2 class="section-title">moneta.t_ar_invoices</h2>
+      </header>
+      <div class="content">
+        <p>Menyimpan data faktur piutang (Account Receivable Invoices) hasil sinkronisasi dari Accurate Online untuk
+          modul penagihan.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik invoice internal.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>aol_id</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">UNIQUE INDEX</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>ID unik Invoice di Accurate Online (AOL).</td>
+              </tr>
+              <tr>
+                <td>slug</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">UNIQUE INDEX</span></td>
+                <td>Slug URL SEO-friendly untuk akses link invoice pembayaran.</td>
+              </tr>
+              <tr>
+                <td>invoice_number</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nomor invoice resmi (contoh: "INV/2026/0023").</td>
+              </tr>
+              <tr>
+                <td>customer_name</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama pelanggan pengutang.</td>
+              </tr>
+              <tr>
+                <td>customer_aol_id</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Kunci relasi ke ID AOL di <a class="relation-link"
+                    href="#t_md_customers">t_md_customers(aol_id)</a>.</td>
+              </tr>
+              <tr>
+                <td>customer_email</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Alamat email pengiriman notifikasi/PDF invoice.</td>
+              </tr>
+              <tr>
+                <td>customer_phone</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Nomor telepon/WhatsApp penerima pengingat tagihan.</td>
+              </tr>
+              <tr>
+                <td>invoice_date</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Tanggal invoice diterbitkan.</td>
+              </tr>
+              <tr>
+                <td>due_date</td>
+                <td>TIMESTAMP</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Tanggal jatuh tempo pembayaran.</td>
+              </tr>
+              <tr>
+                <td>total_amount</td>
+                <td>DECIMAL(20,2)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Total nilai tagihan awal (termasuk pajak).</td>
+              </tr>
+              <tr>
+                <td>balance_amount</td>
+                <td>DECIMAL(20,2)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Sisa saldo piutang yang belum terbayar (outstanding).</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Status pelunasan (e.g. "UNPAID", "PARTIAL", "PAID").</td>
+              </tr>
+              <tr>
+                <td>sync_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>Timestamp sinkronisasi data dari Accurate Online.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 18: moneta.t_ar_reminder_configs -->
+    <section class="section" id="t_ar_reminder_configs">
+      <header class="section-header">
+        <div class="section-num">3.2</div>
+        <h2 class="section-title">moneta.t_ar_reminder_configs</h2>
+      </header>
+      <div class="content">
+        <p>Mengatur threshold interval waktu (contoh: H-7, H-3, H-0 jatuh tempo) pengiriman pesan WhatsApp/Email
+          pengingat piutang otomatis.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik config.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>days_before</td>
+                <td>INTEGER</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Batas jumlah hari sebelum jatuh tempo pengiriman (contoh: 7, 3, 0).</td>
+              </tr>
+              <tr>
+                <td>is_active</td>
+                <td>BOOLEAN</td>
+                <td><span class="gorm-tag">DEFAULT: true</span></td>
+                <td>Menentukan apakah pemicu pengingat interval ini aktif.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 19: moneta.t_ar_special_customers -->
+    <section class="section" id="t_ar_special_customers">
+      <header class="section-header">
+        <div class="section-num">3.3</div>
+        <h2 class="section-title">moneta.t_ar_special_customers</h2>
+      </header>
+      <div class="content">
+        <p>Mencatat pengecualian/pelanggan khusus yang mendapat toleransi perpanjangan tenggat waktu (grace period)
+          tanpa pengiriman blokir otomatis.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik customer dispensasi.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>customer_aol_id</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">UNIQUE INDEX</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>ID AOL target dispensasi. FK ke <a class="relation-link"
+                    href="#t_md_customers">t_md_customers(aol_id)</a>.</td>
+              </tr>
+              <tr>
+                <td>customer_name</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama pelanggan.</td>
+              </tr>
+              <tr>
+                <td>grace_period_days</td>
+                <td>INTEGER</td>
+                <td><span class="gorm-tag">DEFAULT: 0</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Jumlah hari toleransi tambahan jatuh tempo (contoh: 14 hari).</td>
+              </tr>
+              <tr>
+                <td>is_active</td>
+                <td>BOOLEAN</td>
+                <td><span class="gorm-tag">DEFAULT: true</span></td>
+                <td>Apakah dispensasi pelanggan ini sedang aktif.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 20: moneta.t_ar_invoice_special_due_dates -->
+    <section class="section" id="t_ar_invoice_special_due_dates">
+      <header class="section-header">
+        <div class="section-num">3.4</div>
+        <h2 class="section-title">moneta.t_ar_invoice_special_due_dates</h2>
+      </header>
+      <div class="content">
+        <p>Mencatat penyesuaian khusus (Special Due Date) per kasus invoice tertentu di luar tanggal jatuh tempo bawaan
+          sistem.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik entitas.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>invoice_aol_id</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">UNIQUE INDEX</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>ID invoice eksternal AOL target. FK ke <a class="relation-link"
+                    href="#t_ar_invoices">t_ar_invoices(aol_id)</a>.</td>
+              </tr>
+              <tr>
+                <td>special_due_date</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Tanggal jatuh tempo pengganti yang disepakati secara khusus.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 21: moneta.t_ps_loans -->
+    <section class="section" id="t_ps_loans">
+      <header class="section-header">
+        <div class="section-num">3.5</div>
+        <h2 class="section-title">moneta.t_ps_loans</h2>
+      </header>
+      <div class="content">
+        <p>Mengelola pengajuan Pinjaman Sementara (PS Loan) / panjar dinas bagi karyawan untuk keperluan operasional
+          lapangan.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik PS Loan.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>user_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>User ID pemohon pinjaman. FK ke <a class="relation-link" href="#t_core_users">t_core_users(id)</a>.
+                </td>
+              </tr>
+              <tr>
+                <td>amount</td>
+                <td>DECIMAL(20,2)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Jumlah nominal pinjaman kas yang diajukan.</td>
+              </tr>
+              <tr>
+                <td>purpose</td>
+                <td>TEXT</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Tujuan/keperluan penggunaan pinjaman.</td>
+              </tr>
+              <tr>
+                <td>bank_name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama Bank tujuan transfer pencairan (disbursement).</td>
+              </tr>
+              <tr>
+                <td>bank_account_number</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nomor Rekening tujuan transfer.</td>
+              </tr>
+              <tr>
+                <td>estimated_settlement_date</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Estimasi tanggal penyerahan settlement pertanggungjawaban.</td>
+              </tr>
+              <tr>
+                <td>settlement_date</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Tanggal aktual penyerahan settlement lunas. Nullable jika belum lunas.</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">DEFAULT: 'pending_approval'</span> <span class="gorm-tag">NOT NULL</span>
+                </td>
+                <td>Status workflow (draft, pending_approval, approved, rejected, disbursed, settled, cancelled).</td>
+              </tr>
+              <tr>
+                <td>current_approval_level</td>
+                <td>INTEGER</td>
+                <td><span class="gorm-tag">DEFAULT: 1</span></td>
+                <td>Tahap approval level saat ini.</td>
+              </tr>
+              <tr>
+                <td>aol_ps_number</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Nomor transaksi billing / dokumen yang terbit otomatis di AOL saat approved.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 22: moneta.t_ps_settlement_categories -->
+    <section class="section" id="t_ps_settlement_categories">
+      <header class="section-header">
+        <div class="section-num">3.6</div>
+        <h2 class="section-title">moneta.t_ps_settlement_categories</h2>
+      </header>
+      <div class="content">
+        <p>Master kategori biaya pengeluaran untuk pembukuan settlement pertanggungjawaban PS (seperti Tiket, BBM, Tol,
+          ATK).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik kategori.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama kategori biaya (contoh: "Transportasi - BBM").</td>
+              </tr>
+              <tr>
+                <td>is_active</td>
+                <td>BOOLEAN</td>
+                <td><span class="gorm-tag">DEFAULT: true</span></td>
+                <td>Status aktifasi kategori.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 23: moneta.t_ps_settlements -->
+    <section class="section" id="t_ps_settlements">
+      <header class="section-header">
+        <div class="section-num">3.7</div>
+        <h2 class="section-title">moneta.t_ps_settlements</h2>
+      </header>
+      <div class="content">
+        <p>Menampung data induk dokumen pertanggungjawaban dana (Settlement) atas pinjaman PS yang telah dicairkan.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik Settlement.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>loan_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke dokumen pinjaman asal <a class="relation-link" href="#t_ps_loans">t_ps_loans(id)</a>.
+                </td>
+              </tr>
+              <tr>
+                <td>user_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>User ID pelapor. FK ke <a class="relation-link" href="#t_core_users">t_core_users(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>total_amount</td>
+                <td>DECIMAL(20,2)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Total akumulasi biaya riil belanja yang dilaporkan (dari detail kwitansi).</td>
+              </tr>
+              <tr>
+                <td>remaining_amount</td>
+                <td>DECIMAL(20,2)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Sisa uang pinjaman (Uang Pinjaman - Biaya Riil). Bernilai negatif jika nombok (kurang bayar).</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">DEFAULT: 'draft'</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Status pertanggungjawaban (draft, pending_approval, approved, rejected).</td>
+              </tr>
+              <tr>
+                <td>current_approval_level</td>
+                <td>INTEGER</td>
+                <td><span class="gorm-tag">DEFAULT: 1</span></td>
+                <td>Tahap persetujuan workflow.</td>
+              </tr>
+              <tr>
+                <td>notes</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Catatan penjelasan tambahan mengenai pelaporan dana.</td>
+              </tr>
+              <tr>
+                <td>settlement_type</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">DEFAULT: 'Others'</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Tipe settlement.</td>
+              </tr>
+              <tr>
+                <td>payment_type</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">DEFAULT: 'cash'</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Metode pengembalian sisa dana / pembayaran nombok (e.g. 'cash', 'bank').</td>
+              </tr>
+              <tr>
+                <td>bank_name</td>
+                <td>VARCHAR(128)</td>
+                <td>-</td>
+                <td>Nama bank transfer jika sisa dana dikembalikan lewat transfer.</td>
+              </tr>
+              <tr>
+                <td>bank_account_name</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Nama pemilik rekening transfer pengembalian.</td>
+              </tr>
+              <tr>
+                <td>bank_account_number</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Nomor rekening transfer.</td>
+              </tr>
+              <tr>
+                <td>attachment_url</td>
+                <td>VARCHAR(512)</td>
+                <td>-</td>
+                <td>Link berkas PDF/Foto gabungan bukti kwitansi belanja/transfer.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 24: moneta.t_ps_settlement_details -->
+    <section class="section" id="t_ps_settlement_details">
+      <header class="section-header">
+        <div class="section-num">3.8</div>
+        <h2 class="section-title">moneta.t_ps_settlement_details</h2>
+      </header>
+      <div class="content">
+        <p>Mendata pos/rincian struk belanja pengeluaran pertanggungjawaban PS per baris kwitansi.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik baris rincian.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>settlement_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke dokumen settlement induk <a class="relation-link"
+                    href="#t_ps_settlements">t_ps_settlements(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>category_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Relasi FK ke jenis kategori <a class="relation-link"
+                    href="#t_ps_settlement_categories">t_ps_settlement_categories(id)</a>. Nullable.</td>
+              </tr>
+              <tr>
+                <td>custom_category_name</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Diisi apabila kategori bertipe kustom di luar master. Nullable.</td>
+              </tr>
+              <tr>
+                <td>description</td>
+                <td>TEXT</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Penjelasan rincian barang/jasa yang dibayar (contoh: "BBM Alat berat site A").</td>
+              </tr>
+              <tr>
+                <td>amount</td>
+                <td>DECIMAL(20,2)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nominal nominal rupiah pada kwitansi rincian ini.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 25: moneta.t_ps_settlement_logs -->
+    <section class="section" id="t_ps_settlement_logs">
+      <header class="section-header">
+        <div class="section-num">3.9</div>
+        <h2 class="section-title">moneta.t_ps_settlement_logs</h2>
+      </header>
+      <div class="content">
+        <p>Audit trail internal penyerahan, verifikasi keuangan, revisi, dan finalisasi dokumen settlement.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik log settlement.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>settlement_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_ps_settlements">t_ps_settlements(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>user_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>User ID pelaku aksi log. FK ke <a class="relation-link" href="#t_core_users">t_core_users(id)</a>.
+                </td>
+              </tr>
+              <tr>
+                <td>action</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Aksi log (contoh: "SUBMIT", "APPROVE", "REJECT", "REQUEST_REVISION").</td>
+              </tr>
+              <tr>
+                <td>description</td>
+                <td>TEXT</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Uraian detail aktivitas log.</td>
+              </tr>
+              <tr>
+                <td>notes</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Catatan manual dari pemeriksa/keuangan.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+      <h2 style="font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--text);">Katalog Schema
+        & Struktur Tabel</h2>
+      <span class="schema-pill schema-ares">ARES SCHEMA</span>
+    </div>
+
+    <!-- TABEL 26: ares.t_eqp_brands -->
+    <section class="section" id="t_eqp_brands">
+      <header class="section-header">
+        <div class="section-num">4.1</div>
+        <h2 class="section-title">ares.t_eqp_brands</h2>
+      </header>
+      <div class="content">
+        <p>Master pabrikan/merk dari alat berat atau mesin konstruksi yang dipasarkan/diservis (contoh: KATO, SANY).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik Brand.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">UNIQUE INDEX</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama merk mesin resmi (contoh: "KATO", "SANY").</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 27: ares.t_eqp_categories -->
+    <section class="section" id="t_eqp_categories">
+      <header class="section-header">
+        <div class="section-num">4.2</div>
+        <h2 class="section-title">ares.t_eqp_categories</h2>
+      </header>
+      <div class="content">
+        <p>Mendefinisikan tipe/kategori operasional unit mesin di bawah brand pabrikan tertentu (contoh: Excavator,
+          Crane).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik Kategori.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>brand_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke pabrikan utama <a class="relation-link" href="#t_eqp_brands">t_eqp_brands(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama kategori (contoh: "Hydraulic Excavator", "Rough Terrain Crane").</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 28: ares.t_eqp_models -->
+    <section class="section" id="t_eqp_models">
+      <header class="section-header">
+        <div class="section-num">4.3</div>
+        <h2 class="section-title">ares.t_eqp_models</h2>
+      </header>
+      <div class="content">
+        <p>Mencatat tipe model spesifik/seri pabrikan mesin (contoh: KR-25H-V, SY215C).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID Model unik.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>category_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke <a class="relation-link" href="#t_eqp_categories">t_eqp_categories(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>name</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama model/seri unit (contoh: "SY215C-10").</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 29: ares.t_eqp_machines -->
+    <section class="section" id="t_eqp_machines">
+      <header class="section-header">
+        <div class="section-num">4.4</div>
+        <h2 class="section-title">ares.t_eqp_machines</h2>
+      </header>
+      <div class="content">
+        <p>Tabel inventaris fisik unit alat berat operasional (Serial Number) yang dimiliki oleh customer tertentu.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik mesin internal.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>serial_number</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">UNIQUE INDEX</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Nomor Seri Mesin fisik yang unik dari pabrik (Serial Number). Kunci pencarian unit.</td>
+              </tr>
+              <tr>
+                <td>model_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke master spesifikasi tipe <a class="relation-link"
+                    href="#t_eqp_models">t_eqp_models(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>customer_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Relasi FK ke master customer pemilik unit di <a class="relation-link"
+                    href="#t_md_customers">t_md_customers(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>customer_aol_id</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Cadangan pemetaan ID AOL pelanggan.</td>
+              </tr>
+              <tr>
+                <td>site</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Lokasi kerja/proyek unit mesin saat ini (contoh: "Moroali Nickel Site").</td>
+              </tr>
+              <tr>
+                <td>year</td>
+                <td>INTEGER</td>
+                <td>-</td>
+                <td>Tahun perakitan/pembuatan unit mesin.</td>
+              </tr>
+              <tr>
+                <td>hours_meter</td>
+                <td>DOUBLE PRECISION</td>
+                <td>-</td>
+                <td>Total jam kerja operasi kumulatif mesin (Hour Meter).</td>
+              </tr>
+              <tr>
+                <td>last_service_date</td>
+                <td>TIMESTAMP</td>
+                <td>-</td>
+                <td>Tanggal terakhir perawatan berkala (service) dilakukan. Nullable.</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">DEFAULT: 'Active'</span></td>
+                <td>Status kesiapan mesin (contoh: 'Active', 'Breakdown', 'Maintenance').</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+      <h2 style="font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--text);">Katalog Schema
+        & Struktur Tabel</h2>
+      <span class="schema-pill schema-logs">LOGS SCHEMA</span>
+    </div>
+
+    <!-- TABEL 30: application_logs.t_logs_users -->
+    <section class="section" id="t_logs_users">
+      <header class="section-header">
+        <div class="section-num">5.1</div>
+        <h2 class="section-title">application_logs.t_logs_users</h2>
+      </header>
+      <div class="content">
+        <p>Tabel audit trail aktivitas komprehensif untuk mendata aksi krusial user (tindakan CRUD data sensitif).</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID log entitas.</td>
+              </tr>
+              <tr>
+                <td>user_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>User ID pelaku aksi. FK ke <a class="relation-link" href="#t_core_users">t_core_users(id)</a>.
+                  Nullable jika dilakukan sistem otomatis.</td>
+              </tr>
+              <tr>
+                <td>action</td>
+                <td>VARCHAR(128)</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Tindakan aksi yang dilakukan (contoh: "CREATE_LOAN", "LOGIN", "EXPORT_REPORT").</td>
+              </tr>
+              <tr>
+                <td>module</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Modul sistem terkait (contoh: "auth", "moneta_ps").</td>
+              </tr>
+              <tr>
+                <td>entity_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>ID baris data terkait yang termodifikasi (jika ada).</td>
+              </tr>
+              <tr>
+                <td>description</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Deskripsi penjelasan naratif tindakan user dalam bahasa manusia.</td>
+              </tr>
+              <tr>
+                <td>old_data</td>
+                <td>JSONB</td>
+                <td>-</td>
+                <td>Snapshot JSON data lama sebelum perubahan dilakukan (untuk audit log rollback).</td>
+              </tr>
+              <tr>
+                <td>new_data</td>
+                <td>JSONB</td>
+                <td>-</td>
+                <td>Snapshot JSON data baru sesudah perubahan diaplikasikan.</td>
+              </tr>
+              <tr>
+                <td>ip_address</td>
+                <td>VARCHAR(45)</td>
+                <td>-</td>
+                <td>Alamat IP dari perangkat client pelaku aksi (mendukung IPv4 & IPv6).</td>
+              </tr>
+              <tr>
+                <td>user_agent</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>String User Agent dari browser/perangkat client.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Timestamp logging dicatat.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 31: application_logs.t_logs_system_syncs -->
+    <section class="section" id="t_logs_system_syncs">
+      <header class="section-header">
+        <div class="section-num">5.2</div>
+        <h2 class="section-title">application_logs.t_logs_system_syncs</h2>
+      </header>
+      <div class="content">
+        <p>Mencatat riwayat sinkronisasi background worker system dengan API Accurate Online untuk memantau kesehatan
+          integrasi data.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik log sync.</td>
+              </tr>
+              <tr>
+                <td>module</td>
+                <td>VARCHAR(64)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Nama modul yang disinkronisasi (contoh: "customers", "invoices").</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(32)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Hasil status eksekusi (contoh: "success", "failed").</td>
+              </tr>
+              <tr>
+                <td>message</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Pesan hasil sinkronisasi (atau log pesan error stack trace jika gagal).</td>
+              </tr>
+              <tr>
+                <td>trigger_by</td>
+                <td>VARCHAR(128)</td>
+                <td>-</td>
+                <td>Pemicu aksi (contoh: "system_scheduler", atau "username_admin" jika manual).</td>
+              </tr>
+              <tr>
+                <td>started_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>Waktu mulai eksekusi sync.</td>
+              </tr>
+              <tr>
+                <td>finished_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>Waktu selesai eksekusi sync.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 32: application_logs.t_logs_ar_notifications -->
+    <section class="section" id="t_logs_ar_notifications">
+      <header class="section-header">
+        <div class="section-num">5.3</div>
+        <h2 class="section-title">application_logs.t_logs_ar_notifications</h2>
+      </header>
+      <div class="content">
+        <p>Merekam jejak audit pengiriman notifikasi pengingat jatuh tempo invoice (WhatsApp/Email) kepada pelanggan.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID log pengiriman unik.</td>
+              </tr>
+              <tr>
+                <td>invoice_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Relasi FK ke data faktur target di <a class="relation-link"
+                    href="#t_ar_invoices">moneta.t_ar_invoices(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>invoice_no</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Nomor invoice pelapor tagihan.</td>
+              </tr>
+              <tr>
+                <td>customer_name</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Nama pelanggan penerima.</td>
+              </tr>
+              <tr>
+                <td>channel</td>
+                <td>VARCHAR(32)</td>
+                <td>-</td>
+                <td>Metode pengiriman notifikasi (contoh: "whatsapp", "email").</td>
+              </tr>
+              <tr>
+                <td>recipient</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Detail kontak tujuan pengiriman (contoh nomor WhatsApp atau alamat email).</td>
+              </tr>
+              <tr>
+                <td>message</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Konten isi pesan text yang dikirimkan.</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(32)</td>
+                <td>-</td>
+                <td>Status status pengiriman (contoh: "sent", "failed").</td>
+              </tr>
+              <tr>
+                <td>error_message</td>
+                <td>TEXT</td>
+                <td>-</td>
+                <td>Catatan pesan error/keterangan kegagalan dari provider gateway (misal Fonnte/Mailgun).</td>
+              </tr>
+              <tr>
+                <td>sent_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>Waktu pengiriman diproses.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL 33: application_logs.t_logs_system_notifications -->
+    <section class="section" id="t_logs_system_notifications">
+      <header class="section-header">
+        <div class="section-num">5.4</div>
+        <h2 class="section-title">application_logs.t_logs_system_notifications</h2>
+      </header>
+      <div class="content">
+        <p>Mengelola pengiriman dan status baca dari push notification internal sistem (Helios Center) untuk memberi
+          tahu user atas tugas persetujuan baru atau progress tiket.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>SQL Data Type</th>
+                <th>Constraints / GORM Keys</th>
+                <th>Keterangan / Relasi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">PRIMARY KEY</span></td>
+                <td>ID unik notifikasi.</td>
+              </tr>
+              <tr>
+                <td>created_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>updated_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>deleted_at</td>
+                <td>TIMESTAMPTZ</td>
+                <td><span class="gorm-tag">INDEXED</span></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td>user_id</td>
+                <td>UUID</td>
+                <td><span class="gorm-tag">INDEXED</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>ID User penerima notifikasi. FK ke <a class="relation-link"
+                    href="#t_core_users">t_core_users(id)</a>.</td>
+              </tr>
+              <tr>
+                <td>title</td>
+                <td>VARCHAR(255)</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Judul notifikasi push (contoh: "Tugas Persetujuan PS Loan Baru").</td>
+              </tr>
+              <tr>
+                <td>content</td>
+                <td>TEXT</td>
+                <td><span class="gorm-tag">NOT NULL</span></td>
+                <td>Isi pesan notifikasi detail.</td>
+              </tr>
+              <tr>
+                <td>link</td>
+                <td>VARCHAR(255)</td>
+                <td>-</td>
+                <td>Link routing frontend untuk aksi redirect ketika di-klik (contoh: "/moneta/ps").</td>
+              </tr>
+              <tr>
+                <td>module</td>
+                <td>VARCHAR(64)</td>
+                <td>-</td>
+                <td>Domain modul asal (contoh: "moneta", "ares", "helios").</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td>VARCHAR(24)</td>
+                <td><span class="gorm-tag">DEFAULT: 'unread'</span> <span class="gorm-tag">NOT NULL</span></td>
+                <td>Status dibaca oleh user (values: 'unread', 'read').</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Block -->
+    <footer class="doc-footer">
+      <div class="footer-brand">HERA ∘ MCPBIGDATA v1.0</div>
+      <div class="footer-note">// Dokumen ini bersifat rahasia dan hanya untuk internal. Revisi sesuai kebutuhan proyek.
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Scroll To Top Button -->
+  <button class="scroll-to-top" id="scroll-to-top" title="Scroll ke Atas">▲</button>
+
+  <!-- Custom Script for Search -->
+  <script>
+    // Search Engine / Dynamic Filter
+    const searchInput = document.getElementById('schemaSearchInput');
+    const sections = document.querySelectorAll('.section');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+
+        sections.forEach(section => {
+          if (section.id === 'architecture-summary') return;
+
+          const sectionText = section.textContent.toLowerCase();
+          const sectionId = section.id.toLowerCase();
+
+          if (sectionText.includes(query) || sectionId.includes(query)) {
+            section.style.display = 'block';
+            section.classList.remove('collapsed');
+          } else {
+            section.style.display = 'none';
+          }
+        });
+      });
+    }
+  </script>
+</body>
+
+</html>
