@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import LegacyHtmlViewer from "@/components/LegacyHtmlViewer";
+import DocumentAlignmentViewer from "@/components/DocumentAlignmentViewer";
 
 export default async function TalosSRSPage() {
   const filePath = path.join(process.cwd(), "_legacy_html", "talos-wms", "SRS.html");
@@ -13,5 +13,5 @@ export default async function TalosSRSPage() {
   
   content = content.replace(/href="index\.html"/g, 'href="/talos-wms"');
 
-  return <LegacyHtmlViewer htmlContent={content} />;
+  return <DocumentAlignmentViewer htmlContent={content} docTitle="TALOS - Software Requirements Specification" />;
 }

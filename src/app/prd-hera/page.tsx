@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import LegacyHtmlViewer from "@/components/LegacyHtmlViewer";
+import DeepSpaceViewer from "@/components/DeepSpaceViewer";
 
 export default async function PrdHeraPage() {
   const filePath = path.join(process.cwd(), "_legacy_html", "prd-hera.html");
@@ -15,5 +15,5 @@ export default async function PrdHeraPage() {
   // Fix navigation links
   content = content.replace(/href="index\.html"/g, 'href="/"');
 
-  return <LegacyHtmlViewer htmlContent={content} />;
+  return <DeepSpaceViewer htmlContent={content} docTitle="HERA - Product Requirements Document" />;
 }

@@ -1,0 +1,319 @@
+.alignment-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  font-family: 'Lato', sans-serif;
+  scrollbar-width: thin;
+}
+
+.alignment-container::-webkit-scrollbar {
+  height: 8px;
+}
+.alignment-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+.alignment-container::-webkit-scrollbar-thumb {
+  background: rgba(56, 240, 192, 0.3);
+  border-radius: 4px;
+}
+
+.alignment-container .background-stars {
+  position: fixed !important;
+  width: 100vw;
+  height: 100vh;
+}
+
+.alignment-header {
+  position: fixed;
+  top: 10%;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.alignment-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #38f0c0, #4f80ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.alignment-header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+/* Planets Wrapper / Scroll Area */
+.planets-scroll-area {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+/* Compact mode sizes */
+.compact-mode .parallax-planet {
+  width: 90px;
+  height: 90px;
+}
+.compact-mode .planet-num {
+  font-size: 1.4rem;
+}
+.compact-mode .planet-title-external {
+  font-size: 0.8rem;
+  width: 150px;
+}
+
+.parallax-wrapper {
+  position: absolute;
+  pointer-events: auto;
+  transform: translate(-50%, -50%); /* Centering adjustment */
+}
+
+.parallax-planet {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(56, 240, 192, 0.5);
+  box-shadow: 0 0 20px rgba(56, 240, 192, 0.3), inset 0 0 15px rgba(56, 240, 192, 0.2);
+  /* Faster transition for transform to keep up with mouse */
+  transition: transform 0.1s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+/* Specific styling for the different planets to make them unique */
+.planet-0 { border-color: #fca5a5; box-shadow: 0 0 20px rgba(252,165,165,0.3), inset 0 0 15px rgba(252,165,165,0.2); }
+.planet-1 { border-color: #fde047; box-shadow: 0 0 20px rgba(253,224,71,0.3), inset 0 0 15px rgba(253,224,71,0.2); }
+.planet-2 { border-color: #86efac; box-shadow: 0 0 20px rgba(134,239,172,0.3), inset 0 0 15px rgba(134,239,172,0.2); }
+.planet-3 { border-color: #93c5fd; box-shadow: 0 0 20px rgba(147,197,253,0.3), inset 0 0 15px rgba(147,197,253,0.2); }
+.planet-4 { border-color: #d8b4fe; box-shadow: 0 0 20px rgba(216,180,254,0.3), inset 0 0 15px rgba(216,180,254,0.2); }
+.planet-5 { border-color: #f9a8d4; box-shadow: 0 0 20px rgba(249,168,212,0.3), inset 0 0 15px rgba(249,168,212,0.2); }
+
+/* Magnetic hover state applied via JS */
+.parallax-planet.magnetic-active,
+.parallax-planet:hover {
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3) !important;
+  border-color: #fff !important;
+  z-index: 100;
+}
+
+.planet-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+.planet-title-external {
+  position: absolute;
+  top: calc(100% + 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  text-align: center;
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  opacity: 0.75;
+  transition: opacity 0.3s, text-shadow 0.3s;
+}
+
+.parallax-planet.magnetic-active .planet-title-external,
+.parallax-planet:hover .planet-title-external {
+  opacity: 1;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* CRT Modal Effect */
+.crt-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crt-modal-content {
+  width: 90%;
+  max-width: 900px;
+  height: 85vh;
+  background: #111827;
+  border-radius: 12px;
+  border: 2px solid #38f0c0;
+  box-shadow: 0 0 50px rgba(56, 240, 192, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-opening {
+  animation: crt-turn-on 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.crt-closing {
+  animation: crt-turn-off 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.crt-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: #38f0c0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s;
+}
+
+.crt-close-btn:hover {
+  transform: scale(1.2);
+  color: #fff;
+}
+
+.crt-screen {
+  padding: 40px;
+  height: 100%;
+  overflow-y: auto;
+  /* Scanline effect */
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+}
+
+/* Custom Scrollbar for CRT Screen */
+.crt-screen::-webkit-scrollbar {
+  width: 6px;
+}
+.crt-screen::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+.crt-screen::-webkit-scrollbar-thumb {
+  background: rgba(56, 240, 192, 0.3);
+  border-radius: 4px;
+}
+.crt-screen::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 240, 192, 0.7);
+}
+
+.crt-screen::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+.crt-header {
+  border-bottom: 1px solid #38f0c0;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.crt-header .crt-num {
+  font-family: 'DM Mono', monospace;
+  color: #38f0c0;
+  font-size: 1.2rem;
+}
+
+.crt-header h2 {
+  font-family: 'Syne', sans-serif;
+  color: #fff;
+  font-size: 2rem;
+  margin-top: 8px;
+}
+
+/* TV Turn On / Off Keyframes */
+@keyframes crt-turn-on {
+  0% {
+    transform: scale(0.01, 0.001);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1, 0.001);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+@keyframes crt-turn-off {
+  0% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1, 0.001);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.01, 0.001);
+    opacity: 0;
+  }
+}
+
+/* Inside markdown body styles for the modal */
+.markdown-body {
+  color: var(--text-main);
+  line-height: 1.6;
+}
+.markdown-body h3 {
+  color: #38f0c0;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.markdown-body p { margin-bottom: 1rem; }
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+.markdown-body th, .markdown-body td {
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 8px 12px;
+  text-align: left;
+}
+.markdown-body th {
+  background: rgba(255,255,255,0.05);
+  color: #38f0c0;
+}

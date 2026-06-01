@@ -281,7 +281,7 @@
   }
 
   p {
-    color: var(--text-muted);
+    /* color: var(--text-muted); */
     margin-bottom: 14px;
   }
 
@@ -786,13 +786,16 @@
     .content {
       padding: 32px 36px;
     }
+
     .page-wrap {
       padding: 0 24px 80px;
     }
+
     .doc-header {
       padding: 64px 0 48px;
       margin-bottom: 56px;
     }
+
     .toc {
       padding: 28px 32px;
       margin-bottom: 56px;
@@ -1026,197 +1029,230 @@
     display: flex;
     flex-direction: column;
   }
-/* ─── BORDERLESS TABLE ──────────────────────────── */
-.table-borderless {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-  margin-bottom: 12px;
-}
-.table-borderless tbody tr {
-  border-bottom: none !important;
-  background: transparent !important;
-}
-.table-borderless tbody tr:hover {
-  background: transparent !important;
-}
-.table-borderless td {
-  padding: 8px 12px;
-  color: var(--text-muted);
-  vertical-align: top;
-  border-bottom: none !important;
-}
-.table-borderless td:first-child {
-  font-weight: 700;
-  color: var(--text);
-  white-space: nowrap;
-  padding-left: 0;
-  width: 1%;
-}
-.table-borderless td:nth-child(2) {
-  width: 1%;
-  padding-left: 4px;
-  padding-right: 4px;
-  font-weight: 700;
-  color: var(--accent2);
-}
 
-/* ─── HERA PRD SPECIFIC OVERRIDES ───────────────── */
-/* Schema Color Tags */
-.schema-pill {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.schema-public {
-  background: rgba(79, 128, 255, 0.12);
-  color: var(--accent);
-  border: 1px solid rgba(79, 128, 255, 0.25);
-}
-.schema-moneta {
-  background: rgba(245, 166, 35, 0.12);
-  color: var(--accent3);
-  border: 1px solid rgba(245, 166, 35, 0.25);
-}
-.schema-ares {
-  background: rgba(56, 240, 192, 0.12);
-  color: var(--success);
-  border: 1px solid rgba(56, 240, 192, 0.25);
-}
-.schema-logs {
-  background: rgba(255, 90, 106, 0.12);
-  color: var(--danger);
-  border: 1px solid rgba(255, 90, 106, 0.25);
-}
+  /* ─── BORDERLESS TABLE ──────────────────────────── */
+  .table-borderless {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
 
-/* Quick status indicators */
-.gorm-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-[data-theme="light"] .gorm-tag {
-  background: rgba(0, 0, 0, 0.02);
-}
+  .table-borderless tbody tr {
+    border-bottom: none !important;
+    background: transparent !important;
+  }
 
-/* Relationship link badge styling */
-.relation-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--accent);
-  font-weight: 500;
-  text-decoration: none;
-  border-bottom: 1px dotted var(--accent);
-  font-size: 12px;
-}
-.relation-link:hover {
-  color: var(--accent2);
-  border-bottom-color: var(--accent2);
-}
+  .table-borderless tbody tr:hover {
+    background: transparent !important;
+  }
 
-/* Drawer Link Formatting overrides */
-.toc-link-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 13px;
-  border-radius: 6px;
-  transition: all 0.2s;
-  margin-bottom: 2px;
-}
-.toc-link-item:hover {
-  color: var(--accent2);
-  background: rgba(79, 128, 255, 0.08);
-  padding-left: 18px;
-}
+  .table-borderless td {
+    padding: 8px 12px;
+    color: var(--text-muted);
+    vertical-align: top;
+    border-bottom: none !important;
+  }
 
-/* Custom architecture diagram styles */
-.arch-grid-dashboard {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  margin-top: 24px;
-}
-.arch-card-premium {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  text-align: left;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s, transform 0.2s;
-}
-.arch-card-premium::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-}
-.arch-card-premium.public::before { background: var(--accent); }
-.arch-card-premium.moneta::before { background: var(--accent3); }
-.arch-card-premium.ares::before { background: var(--success); }
-.arch-card-premium.logs::before { background: var(--danger); }
-.arch-card-premium:hover {
-  border-color: var(--border-bright);
-  transform: translateY(-2px);
-}
-.arch-card-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--text);
-}
-.arch-card-count {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 12px;
-}
+  .table-borderless td:first-child {
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    padding-left: 0;
+    width: 1%;
+  }
 
-/* Search Input Box */
-.search-box-container {
-  margin-bottom: 32px;
-  position: relative;
-}
-.search-input {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 14px 20px 14px 44px;
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-family: 'Lato', sans-serif;
-  transition: all 0.3s;
-}
-.search-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79, 128, 255, 0.15);
-}
-.search-icon-svg {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  pointer-events: none;
-}
+  .table-borderless td:nth-child(2) {
+    width: 1%;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  /* ─── HERA PRD SPECIFIC OVERRIDES ───────────────── */
+  /* Schema Color Tags */
+  .schema-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .schema-public {
+    background: rgba(79, 128, 255, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(79, 128, 255, 0.25);
+  }
+
+  .schema-moneta {
+    background: rgba(245, 166, 35, 0.12);
+    color: var(--accent3);
+    border: 1px solid rgba(245, 166, 35, 0.25);
+  }
+
+  .schema-ares {
+    background: rgba(56, 240, 192, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(56, 240, 192, 0.25);
+  }
+
+  .schema-logs {
+    background: rgba(255, 90, 106, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(255, 90, 106, 0.25);
+  }
+
+  /* Quick status indicators */
+  .gorm-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  [data-theme="light"] .gorm-tag {
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  /* Relationship link badge styling */
+  .relation-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent);
+    font-size: 12px;
+  }
+
+  .relation-link:hover {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+  }
+
+  /* Drawer Link Formatting overrides */
+  .toc-link-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+  }
+
+  .toc-link-item:hover {
+    color: var(--accent2);
+    background: rgba(79, 128, 255, 0.08);
+    padding-left: 18px;
+  }
+
+  /* Custom architecture diagram styles */
+  .arch-grid-dashboard {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .arch-card-premium {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .arch-card-premium::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+  }
+
+  .arch-card-premium.public::before {
+    background: var(--accent);
+  }
+
+  .arch-card-premium.moneta::before {
+    background: var(--accent3);
+  }
+
+  .arch-card-premium.ares::before {
+    background: var(--success);
+  }
+
+  .arch-card-premium.logs::before {
+    background: var(--danger);
+  }
+
+  .arch-card-premium:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+  }
+
+  .arch-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .arch-card-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  /* Search Input Box */
+  .search-box-container {
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 20px 14px 44px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-family: 'Lato', sans-serif;
+    transition: all 0.3s;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79, 128, 255, 0.15);
+  }
+
+  .search-icon-svg {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }

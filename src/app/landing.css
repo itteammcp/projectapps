@@ -20,6 +20,54 @@
     --orb-opacity: 0.4;
 }
 
+[data-theme="light"] .orbit {
+    border-color: rgba(99, 102, 241, 0.25);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.05);
+}
+
+[data-theme="light"] .planet, 
+[data-theme="light"] .sun-hera, 
+[data-theme="light"] .sun-talos {
+    background: rgba(255, 255, 255, 0.85);
+    color: #0f172a;
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="light"] .planet h2, 
+[data-theme="light"] .sun-hera h2, 
+[data-theme="light"] .sun-talos h2 {
+    text-shadow: none;
+    color: #0f172a;
+}
+
+[data-theme="light"] .planet p, 
+[data-theme="light"] .sun-hera p, 
+[data-theme="light"] .sun-talos p {
+    color: #475569;
+}
+
+[data-theme="light"] .planet:hover, 
+[data-theme="light"] .sun-hera:hover, 
+[data-theme="light"] .sun-talos:hover {
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 0 10px rgba(99, 102, 241, 0.1) !important;
+    border-color: rgba(99, 102, 241, 0.6) !important;
+}
+
+[data-theme="light"] .orbit-creative-x .planet {
+    border-color: rgba(236, 72, 153, 0.4);
+}
+
+[data-theme="light"] .planet::before, 
+[data-theme="light"] .planet::after, 
+[data-theme="light"] .sun-hera::before, 
+[data-theme="light"] .sun-hera::after, 
+[data-theme="light"] .sun-talos::before, 
+[data-theme="light"] .sun-talos::after {
+    opacity: 0.3;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -33,6 +81,17 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+}
+
+.landing-wrapper {
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 h1, h2, .subtitle {
@@ -95,6 +154,240 @@ h1, h2, .subtitle {
     100% { margin-top: 30px; margin-left: 30px; }
 }
 
+.hero-floating {
+    position: absolute;
+    top: 5%;
+    text-align: center;
+    z-index: 10;
+}
+
+.hero-floating h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a5b4fc, #fbcfe8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.hero-floating .subtitle {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+}
+
+.solar-system {
+    position: relative;
+    width: 100vmin;
+    height: 100vmin;
+    max-width: 800px;
+    max-height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5vh;
+}
+
+/* Base Orbit - Holographic style */
+.orbit {
+    position: absolute;
+    border: 1px dashed rgba(56, 240, 192, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(56, 240, 192, 0.05);
+}
+
+/* Orbit Rotations with Animations */
+@keyframes orbit-cx {
+    0%   { transform: rotate(60deg); }
+    100% { transform: rotate(420deg); }
+}
+@keyframes counter-orbit-cx {
+    0%   { transform: translate(-50%, -50%) rotate(-60deg); }
+    100% { transform: translate(-50%, -50%) rotate(-420deg); }
+}
+
+@keyframes orbit-talos-anim {
+    0%   { transform: rotate(210deg); }
+    100% { transform: rotate(570deg); }
+}
+@keyframes counter-orbit-talos-anim {
+    0%   { transform: translate(-50%, -50%) rotate(-210deg); }
+    100% { transform: translate(-50%, -50%) rotate(-570deg); }
+}
+
+.orbit-creative-x {
+    width: 350px;
+    height: 350px;
+    animation: orbit-cx 45s linear infinite;
+}
+.orbit-creative-x .planet-container { 
+    animation: counter-orbit-cx 45s linear infinite;
+}
+
+.orbit-talos {
+    width: 550px;
+    height: 550px;
+    animation: orbit-talos-anim 65s linear infinite;
+}
+.orbit-talos .planet-container { 
+    animation: counter-orbit-talos-anim 65s linear infinite;
+}
+
+/* Pause animation on hover for easier clicking */
+.orbit:hover, .orbit:hover .planet-container {
+    animation-play-state: paused;
+}
+
+.orbit-prd {
+    width: 300px;
+    height: 300px;
+    transform: rotate(45deg);
+}
+.orbit-prd .planet-container { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.orbit-srs {
+    width: 450px;
+    height: 450px;
+    transform: rotate(180deg);
+}
+.orbit-srs .planet-container { transform: translate(-50%, -50%) rotate(-180deg); }
+
+.orbit-sdd {
+    width: 600px;
+    height: 600px;
+    transform: rotate(315deg);
+}
+.orbit-sdd .planet-container { transform: translate(-50%, -50%) rotate(-315deg); }
+
+.planet-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+}
+
+/* Sci-fi Planets and Suns */
+.planet, .sun-hera, .sun-talos {
+    position: relative;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(56, 240, 192, 0.5);
+    box-shadow: 0 0 20px rgba(56, 240, 192, 0.3), inset 0 0 15px rgba(56, 240, 192, 0.2);
+}
+
+.planet {
+    width: 140px;
+    height: 140px;
+}
+
+.sun-hera, .sun-talos {
+    width: 180px;
+    height: 180px;
+    position: absolute;
+    z-index: 5;
+    border-color: rgba(99, 102, 241, 0.8);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5), inset 0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+/* Specific colors for specific planets */
+.orbit-creative-x .planet {
+    border-color: rgba(236, 72, 153, 0.6);
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3), inset 0 0 15px rgba(236, 72, 153, 0.2);
+}
+
+.orbit-talos .planet {
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), inset 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+/* Holographic Rings */
+.planet::before, .planet::after, .sun-hera::before, .sun-hera::after, .sun-talos::before, .sun-talos::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    pointer-events: none;
+}
+
+.planet::before, .sun-hera::before, .sun-talos::before {
+    border-top-color: inherit;
+    border-bottom-color: inherit;
+    border-width: 1px;
+    animation: holo-spin-1 6s linear infinite;
+    opacity: 0.6;
+}
+
+.planet::after, .sun-hera::after, .sun-talos::after {
+    border-left-color: inherit;
+    border-right-color: inherit;
+    border-width: 1px;
+    animation: holo-spin-2 8s linear infinite reverse;
+    opacity: 0.6;
+}
+
+@keyframes holo-spin-1 {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.05); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes holo-spin-2 {
+    0% { transform: rotate(0deg) scale(1.05); }
+    50% { transform: rotate(180deg) scale(1); }
+    100% { transform: rotate(360deg) scale(1.05); }
+}
+
+/* Hover State - Expanding Data Panel effect */
+.planet:hover, .sun-hera:hover, .sun-talos:hover {
+    transform: scale(1.15);
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3) !important;
+    z-index: 10;
+}
+
+.planet h2, .sun-hera h2, .sun-talos h2 {
+    font-size: 1.1rem;
+    margin: 5px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'DM Mono', monospace;
+    text-shadow: 0 0 8px rgba(255,255,255,0.8);
+}
+
+.sun-hera h2, .sun-talos h2 {
+    font-size: 1.4rem;
+}
+
+.planet p, .sun-hera p, .sun-talos p {
+    font-size: 0.75rem;
+    opacity: 0; 
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'DM Mono', monospace;
+}
+
+.planet:hover p, .sun-hera:hover p, .sun-talos:hover p {
+    opacity: 1;
+    max-height: 50px;
+    margin-top: 8px;
+}
+
+/* Base styles restored for other pages */
 .glass-container {
     width: 95%;
     max-width: 1200px;
@@ -112,9 +405,7 @@ h1, h2, .subtitle {
     margin: 4rem auto 2rem;
 }
 
-.hero {
-    text-align: center;
-}
+.hero { text-align: center; }
 
 .hero h1 {
     font-size: 2.5rem;
@@ -172,9 +463,7 @@ h1, h2, .subtitle {
     transition: 0.5s;
 }
 
-.glass-card:hover::before {
-    left: 150%;
-}
+.glass-card:hover::before { left: 150%; }
 
 .glass-card:hover {
     transform: translateY(-8px);
@@ -199,13 +488,6 @@ h1, h2, .subtitle {
     line-height: 1.5;
 }
 
-footer {
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-top: 1rem;
-}
-
 @media (min-width: 768px) {
     .glass-container {
         padding: 4rem;
@@ -217,6 +499,38 @@ footer {
     .docs-grid {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
+}
+
+.footer-floating {
+    position: absolute;
+    bottom: 2%;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Sci-fi Hologram Grid */
+.background-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background-image: 
+        linear-gradient(rgba(56, 240, 192, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 240, 192, 0.1) 1px, transparent 1px);
+    background-size: 60px 60px;
+    background-position: center center;
+    transform: perspective(1000px) rotateX(60deg) scale(2);
+    transform-origin: center top;
+    animation: grid-move 10s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes grid-move {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 60px; }
 }
 
 .theme-toggle-btn {
@@ -249,4 +563,31 @@ footer {
 
 [data-theme="light"] .theme-toggle-btn:hover {
     background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .background-stars {
+    filter: invert(1);
+    opacity: 0.2;
+}
+
+.btn-back-portal {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s;
+    z-index: 100;
+    backdrop-filter: blur(16px);
+}
+
+.btn-back-portal:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
 }
