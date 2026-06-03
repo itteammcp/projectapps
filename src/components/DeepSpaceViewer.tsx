@@ -11,7 +11,19 @@ interface Section {
   content: string;
 }
 
-export default function DeepSpaceViewer({ htmlContent, docTitle }: { htmlContent: string, docTitle: string }) {
+export default function DeepSpaceViewer({ 
+  htmlContent, 
+  docTitle,
+  backUrl = "/",
+  accentColor = "#38f0c0",
+  accentColorRgb = "56, 240, 192"
+}: { 
+  htmlContent: string; 
+  docTitle: string;
+  backUrl?: string;
+  accentColor?: string;
+  accentColorRgb?: string;
+}) {
   const [sections, setSections] = useState<Section[]>([]);
   const [activeSection, setActiveSection] = useState<number | null>(null);
   const [isClosing, setIsClosing] = useState(false);
@@ -60,8 +72,8 @@ export default function DeepSpaceViewer({ htmlContent, docTitle }: { htmlContent
 
       if (isTable) {
         schemaMap[groupName].content += `
-          <div class="schema-table-block" style="margin-top: 2rem; border-top: 1px dashed rgba(56, 240, 192, 0.4); padding-top: 1.5rem;">
-            <h3 style="color: #38f0c0; font-size: 1.4rem; font-family: 'DM Mono', monospace;">${title}</h3>
+          <div class="schema-table-block" style="margin-top: 2rem; border-top: 1px dashed rgba(var(--accent-color-rgb), 0.4); padding-top: 1.5rem;">
+            <h3 style="color: var(--accent-color); font-size: 1.4rem; font-family: 'DM Mono', monospace;">${title}</h3>
             ${content}
           </div>
         `;
@@ -136,9 +148,14 @@ export default function DeepSpaceViewer({ htmlContent, docTitle }: { htmlContent
       className="deepspace-container"
       onMouseMove={handleMouseMove}
       ref={containerRef}
+      style={{
+        // @ts-ignore
+        "--accent-color": accentColor,
+        "--accent-color-rgb": accentColorRgb
+      }}
     >
       <Link 
-        href="/" 
+        href={backUrl} 
         style={{ 
           position: 'fixed', 
           top: 'auto',
@@ -146,8 +163,8 @@ export default function DeepSpaceViewer({ htmlContent, docTitle }: { htmlContent
           left: '24px', 
           zIndex: 9999, 
           padding: '10px 20px', 
-          background: '#6366f1', 
-          color: 'white', 
+          background: 'var(--accent-color)', 
+          color: 'var(--bg-color, #0f172a)', 
           borderRadius: '8px', 
           textDecoration: 'none', 
           fontFamily: "'Syne', sans-serif", 
@@ -159,6 +176,7 @@ export default function DeepSpaceViewer({ htmlContent, docTitle }: { htmlContent
         }}>
         &larr; Back
       </Link>
+
 
       <div className="background-stars-3d"></div>
 

@@ -591,3 +591,141 @@ h1, h2, .subtitle {
     background: rgba(255,255,255,0.1);
     transform: translateY(-2px);
 }
+
+/* ─── CREATIVE-X PORTAL CUSTOM STYLES ──────────────── */
+
+/* Common Sun and Planet definitions for Creative-X */
+.sun-creative-x {
+    position: relative;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    
+    width: 180px;
+    height: 180px;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid rgba(236, 72, 153, 0.8);
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.5), inset 0 0 20px rgba(236, 72, 153, 0.4);
+}
+
+.sun-creative-x h2 {
+    font-size: 1.4rem;
+    margin: 5px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'DM Mono', monospace;
+    text-shadow: 0 0 8px rgba(255,255,255,0.8);
+}
+
+.sun-creative-x p {
+    font-size: 0.75rem;
+    opacity: 0; 
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'DM Mono', monospace;
+}
+
+.sun-creative-x:hover p {
+    opacity: 1;
+    max-height: 50px;
+    margin-top: 8px;
+}
+
+.sun-creative-x:hover {
+    transform: scale(1.15);
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.3) !important;
+    z-index: 10;
+}
+
+.sun-creative-x::before, .sun-creative-x::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    pointer-events: none;
+}
+
+.sun-creative-x::before {
+    border-top-color: rgba(236, 72, 153, 0.8);
+    border-bottom-color: rgba(236, 72, 153, 0.8);
+    border-width: 1px;
+    animation: holo-spin-1 6s linear infinite;
+    opacity: 0.6;
+}
+
+.sun-creative-x::after {
+    border-left-color: rgba(236, 72, 153, 0.8);
+    border-right-color: rgba(236, 72, 153, 0.8);
+    border-width: 1px;
+    animation: holo-spin-2 8s linear infinite reverse;
+    opacity: 0.6;
+}
+
+/* Light Theme overrides for Sun Creative-X */
+[data-theme="light"] .sun-creative-x {
+    background: rgba(255, 255, 255, 0.85);
+    color: #0f172a;
+    border-color: rgba(236, 72, 153, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="light"] .sun-creative-x h2 {
+    text-shadow: none;
+    color: #0f172a;
+}
+
+[data-theme="light"] .sun-creative-x p {
+    color: #475569;
+}
+
+[data-theme="light"] .sun-creative-x:hover {
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 0 10px rgba(236, 72, 153, 0.1) !important;
+    border-color: rgba(236, 72, 153, 0.6) !important;
+}
+
+[data-theme="light"] .sun-creative-x::before,
+[data-theme="light"] .sun-creative-x::after {
+    opacity: 0.3;
+}
+
+/* Creative-X Portal Planets */
+.creative-x-portal .planet {
+    border-color: rgba(236, 72, 153, 0.6);
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3), inset 0 0 15px rgba(236, 72, 153, 0.2);
+}
+
+.creative-x-portal .planet::before,
+.creative-x-portal .planet::after {
+    border-color: rgba(236, 72, 153, 0.6);
+}
+
+[data-theme="light"] .creative-x-portal .planet {
+    border-color: rgba(236, 72, 153, 0.4);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="light"] .creative-x-portal .planet:hover {
+    border-color: rgba(236, 72, 153, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 0 10px rgba(236, 72, 153, 0.1) !important;
+}
+

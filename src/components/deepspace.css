@@ -38,13 +38,13 @@
   padding: 10px 30px;
   border-radius: 20px;
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(56, 240, 192, 0.2);
+  border: 1px solid rgba(var(--accent-color-rgb), 0.2);
 }
 .deepspace-header p {
   font-family: 'Syne', sans-serif;
   font-size: 2rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #38f0c0, #4f80ff);
+  background: linear-gradient(135deg, var(--accent-color), #4f80ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
@@ -98,8 +98,8 @@
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(56, 240, 192, 0.5);
-  box-shadow: 0 0 20px rgba(56, 240, 192, 0.3), inset 0 0 15px rgba(56, 240, 192, 0.2);
+  border: 1px solid rgba(var(--accent-color-rgb), 0.5);
+  box-shadow: 0 0 20px rgba(var(--accent-color-rgb), 0.3), inset 0 0 15px rgba(var(--accent-color-rgb), 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   /* Note: scale is applied inline to ds-planet */
 }
@@ -170,8 +170,8 @@
   height: 85vh;
   background: #111827;
   border-radius: 12px;
-  border: 2px solid #38f0c0;
-  box-shadow: 0 0 50px rgba(56, 240, 192, 0.2);
+  border: 2px solid var(--accent-color);
+  box-shadow: 0 0 50px rgba(var(--accent-color-rgb), 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -190,7 +190,7 @@
   right: 16px;
   background: transparent;
   border: none;
-  color: #38f0c0;
+  color: var(--accent-color);
   font-size: 1.5rem;
   cursor: pointer;
   z-index: 10;
@@ -223,11 +223,11 @@
   border-radius: 4px;
 }
 .crt-screen::-webkit-scrollbar-thumb {
-  background: rgba(56, 240, 192, 0.3);
+  background: rgba(var(--accent-color-rgb), 0.3);
   border-radius: 4px;
 }
 .crt-screen::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 240, 192, 0.7);
+  background: rgba(var(--accent-color-rgb), 0.7);
 }
 
 .crt-screen::before {
@@ -245,14 +245,14 @@
 }
 
 .crt-header {
-  border-bottom: 1px solid #38f0c0;
+  border-bottom: 1px solid var(--accent-color);
   padding-bottom: 16px;
   margin-bottom: 24px;
 }
 
 .crt-header .crt-num {
   font-family: 'DM Mono', monospace;
-  color: #38f0c0;
+  color: var(--accent-color);
   font-size: 1.2rem;
 }
 
@@ -300,7 +300,7 @@
   line-height: 1.6;
 }
 .markdown-body h3 {
-  color: #38f0c0;
+  color: var(--accent-color);
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
 }
@@ -317,5 +317,5 @@
 }
 .markdown-body th {
   background: rgba(255,255,255,0.05);
-  color: #38f0c0;
+  color: var(--accent-color);
 }

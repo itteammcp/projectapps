@@ -1,0 +1,2715 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creative-X — Product Requirement Document (PRD)</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Syne:wght@700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  
+  <!-- CSS reference styles.css -->
+  <style>
+  :root {
+    --bg: #0a0d12;
+    --surface: #111620;
+    --surface2: #171d2b;
+    --border: rgba(99, 130, 255, 0.15);
+    --border-bright: rgba(99, 130, 255, 0.4);
+    --accent: #4f80ff;
+    --accent2: #38f0c0;
+    --accent3: #f5a623;
+    --text: #e8ecf5;
+    --text-muted: #8a95b0;
+    --text-dim: #505870;
+    --danger: #ff5a6a;
+    --success: #38f0c0;
+    --warning: #f5a623;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: .4;
+  }
+
+  /* ─── GRID BACKGROUND ───────────────────────────── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79, 128, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79, 128, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── LAYOUT ────────────────────────────────────── */
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ─── HEADER ────────────────────────────────────── */
+  .doc-header {
+    padding: 64px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+    position: relative;
+  }
+
+  .doc-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -24px;
+    right: -24px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(79, 128, 255, 0.1);
+    border: 1px solid var(--border-bright);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+
+  .header-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+    box-shadow: 0 0 8px var(--accent2);
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: .3;
+    }
+  }
+
+  h1.doc-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 40%, var(--accent) 80%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .doc-subtitle {
+    font-size: 17px;
+    color: var(--text-muted);
+    font-weight: 300;
+    max-width: 600px;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .meta-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+  }
+
+  .meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .meta-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .meta-value.accent {
+    color: var(--accent2);
+  }
+
+  /* ─── TOC ───────────────────────────────────────── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    margin-bottom: 56px;
+  }
+
+  .toc-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+
+  .toc-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 6px 24px;
+  }
+
+  .toc-list li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 4px 0;
+    transition: color .2s;
+  }
+
+  .toc-list li a:hover {
+    color: var(--accent2);
+  }
+
+  .toc-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    min-width: 24px;
+  }
+
+  /* ─── SECTION ───────────────────────────────────── */
+  .section {
+    margin-bottom: 64px;
+    scroll-margin-top: 32px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(79, 128, 255, 0.1);
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    padding: 4px 10px;
+    white-space: nowrap;
+    margin-top: 6px;
+  }
+
+  h2.section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+  }
+
+  h3.sub-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 14px;
+    padding-left: 14px;
+    border-left: 3px solid var(--accent);
+  }
+
+  h4.sub-sub-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-family: 'DM Mono', monospace;
+    margin: 20px 0 10px;
+  }
+
+  p {
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  /* ─── PROSE CONTENT WRAPPER ─────────────────────── */
+  .content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 36px;
+  }
+
+  @media (max-width: 600px) {
+    .content {
+      padding: 20px 18px;
+    }
+  }
+
+  /* ─── FEATURE CARDS ─────────────────────────────── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .feature-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: border-color .2s, transform .2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .feature-card.blue::before {
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .feature-card.teal::before {
+    background: linear-gradient(90deg, var(--accent2), transparent);
+  }
+
+  .feature-card.orange::before {
+    background: linear-gradient(90deg, var(--warning), transparent);
+  }
+
+  .feature-card.red::before {
+    background: linear-gradient(90deg, var(--danger), transparent);
+  }
+
+  .feature-card.purple::before {
+    background: linear-gradient(90deg, #a78bfa, transparent);
+  }
+
+  .feature-card.pink::before {
+    background: linear-gradient(90deg, #f472b6, transparent);
+  }
+
+  .feature-card.lime::before {
+    background: linear-gradient(90deg, #a3e635, transparent);
+  }
+
+  .feature-card.sky::before {
+    background: linear-gradient(90deg, #38bdf8, transparent);
+  }
+
+  .feature-card.amber::before {
+    background: linear-gradient(90deg, #fbbf24, transparent);
+  }
+
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ─── TABLE ─────────────────────────────────────── */
+  .table-wrap {
+    overflow-x: auto;
+    margin-top: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  thead th {
+    background: rgba(79, 128, 255, 0.08);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 12px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(99, 130, 255, 0.07);
+    transition: background .15s;
+  }
+
+  tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background: rgba(79, 128, 255, 0.04);
+  }
+
+  tbody td {
+    padding: 12px 18px;
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+
+  tbody td:first-child {
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* ─── BADGE / PILL ──────────────────────────────── */
+  .badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .badge-high {
+    background: rgba(255, 90, 106, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(255, 90, 106, 0.25);
+  }
+
+  .badge-mid {
+    background: rgba(245, 166, 35, 0.12);
+    color: var(--warning);
+    border: 1px solid rgba(245, 166, 35, 0.25);
+  }
+
+  .badge-low {
+    background: rgba(56, 240, 192, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(56, 240, 192, 0.25);
+  }
+
+  .badge-blue {
+    background: rgba(79, 128, 255, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(79, 128, 255, 0.25);
+  }
+
+  /* ─── CHECKLIST ─────────────────────────────────── */
+  ul.checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  ul.checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  ul.checklist li::before {
+    content: '▸';
+    color: var(--accent2);
+    font-size: 12px;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  /* ─── TECH STACK PILLS ──────────────────────────── */
+  .tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .tech-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    transition: border-color .2s;
+  }
+
+  .tech-pill:hover {
+    border-color: var(--border-bright);
+  }
+
+  .tech-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ─── CALLOUT ───────────────────────────────────── */
+  .callout {
+    display: flex;
+    gap: 14px;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    margin: 18px 0;
+    font-size: 14px;
+  }
+
+  .callout-info {
+    background: rgba(79, 128, 255, 0.08);
+    border: 1px solid rgba(79, 128, 255, 0.2);
+    color: var(--text-muted);
+  }
+
+  .callout-warn {
+    background: rgba(245, 166, 35, 0.08);
+    border: 1px solid rgba(245, 166, 35, 0.2);
+    color: var(--text-muted);
+  }
+
+  .callout-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ─── TIMELINE ──────────────────────────────────── */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+    margin-top: 16px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+
+  .tl-phase {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .tl-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .tl-duration {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .tl-deliverables {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* ─── USER ROLE CARDS ───────────────────────────── */
+  .role-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .role-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    text-align: center;
+  }
+
+  .role-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 12px;
+  }
+
+  .role-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .role-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ─── ARCH DIAGRAM ──────────────────────────────── */
+  .arch-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    text-align: center;
+  }
+
+  .arch-layer {
+    margin-bottom: 12px;
+  }
+
+  .arch-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .arch-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .arch-row .arch-box {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .arch-arrow {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 18px;
+    margin: 4px 0;
+  }
+
+  /* ─── DIVIDER ───────────────────────────────────── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  /* ─── NFR TABLE ─────────────────────────────────── */
+  .nfr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .nfr-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .nfr-metric {
+    font-family: 'DM Mono', monospace;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+
+  .nfr-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .nfr-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ─── FOOTER ────────────────────────────────────── */
+  .doc-footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+    gap: 12px;
+  }
+
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .footer-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* ─── PRINT / RESPONSIVE ────────────────────────── */
+  @media (max-width: 768px) {
+    .feature-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .role-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .nfr-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .meta-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .toc-list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .role-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .meta-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media print {
+    body {
+      background: white;
+      color: black;
+    }
+
+    body::before,
+    body::after {
+      display: none;
+    }
+  }
+
+  /* ─── LIGHT THEME ───────────────────────────── */
+  [data-theme="light"] {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface2: #f1f5f9;
+    --border: rgba(79, 128, 255, 0.2);
+    --border-bright: rgba(79, 128, 255, 0.5);
+    --text: #0f172a;
+    --text-muted: #475569;
+    --text-dim: #64748b;
+    --danger: #ef4444;
+    --success: #10b981;
+    --warning: #f59e0b;
+  }
+
+  [data-theme="light"] h1.doc-title {
+    background: linear-gradient(135deg, #0f172a 40%, var(--accent) 80%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  [data-theme="light"] body::before {
+    opacity: .15;
+  }
+
+  [data-theme="light"] body::after {
+    background-image:
+      linear-gradient(rgba(79, 128, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79, 128, 255, 0.06) 1px, transparent 1px);
+  }
+
+  /* ─── THEME TOGGLE BUTTON ───────────────────────────── */
+  .theme-toggle {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1000;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+  }
+
+  [data-theme="light"] .theme-toggle {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  /* ─── ACCORDION ─────────────────────────────────── */
+  .section-header {
+    cursor: pointer;
+    transition: opacity 0.2s;
+    position: relative;
+    align-items: center;
+    /* To align the chevron nicely */
+  }
+
+  .section-header:hover {
+    opacity: 0.8;
+  }
+
+  .section-header::after {
+    content: '▼';
+    font-size: 16px;
+    color: var(--accent);
+    margin-left: auto;
+    /* Push to the right end */
+    transition: transform 0.3s;
+  }
+
+  .section.collapsed .section-header::after {
+    transform: rotate(-90deg);
+  }
+
+  .section.collapsed .content {
+    display: none;
+  }
+
+  /* ─── SCROLL TO TOP BUTTON ──────────────────────── */
+  .scroll-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79, 128, 255, 0.4);
+    transition: opacity 0.3s, transform 0.3s, visibility 0.3s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+  }
+
+  .scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .scroll-to-top:hover {
+    background: var(--accent2);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(56, 240, 192, 0.4);
+  }
+
+  /* ─── DRAWER TOC ─────────────────────────────────── */
+  .burger-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+
+  .burger-btn:hover {
+    color: var(--accent);
+  }
+
+  .toc {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 300px;
+    height: 100vh;
+    background: var(--surface);
+    border: none;
+    border-right: 1px solid var(--border);
+    border-radius: 0;
+    padding: 28px 32px;
+    margin-bottom: 0;
+    z-index: 2000;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .toc.open {
+    left: 0;
+  }
+
+  .toc-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .toc-overlay.visible {
+    display: block;
+    opacity: 1;
+  }
+
+  .toc-list {
+    display: flex;
+    flex-direction: column;
+  }
+/* ─── BORDERLESS TABLE ──────────────────────────── */
+.table-borderless {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.table-borderless tbody tr {
+  border-bottom: none !important;
+  background: transparent !important;
+}
+.table-borderless tbody tr:hover {
+  background: transparent !important;
+}
+.table-borderless td {
+  padding: 8px 12px;
+  color: var(--text-muted);
+  vertical-align: top;
+  border-bottom: none !important;
+}
+.table-borderless td:first-child {
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  padding-left: 0;
+  width: 1%;
+}
+.table-borderless td:nth-child(2) {
+  width: 1%;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-weight: 700;
+  color: var(--accent2);
+}
+
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    
+    <!-- Corporate Premium Header -->
+    <header class="doc-header">
+      <div class="header-badge">PRODUCT REQUIREMENT DOCUMENT</div>
+      <h1 class="doc-title">CREATIVE-X</h1>
+      <div class="doc-subtitle">Sistem ERP Internal Terintegrasi: Manajemen Alat Berat (Ares), Arus Piutang Keuangan & Kasbon (Moneta), dan Mesin Otorisasi (Approvals).</div>
+      
+      <!-- Meta Information Grid -->
+      <div class="meta-grid">
+        <div class="meta-item">
+          <div class="meta-label">Organisasi</div>
+          <div class="meta-value accent">PT Multicrane Perkasa</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Versi Dokumen</div>
+          <div class="meta-value">v1.0.0 — Stable</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Tanggal Rilis</div>
+          <div class="meta-value">30 Mei 2026</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Klasifikasi</div>
+          <div class="meta-value" style="color: var(--danger);">CONFIDENTIAL</div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Table of Contents -->
+    <nav class="toc">
+      <div class="toc-title">Daftar Isi Dokumen</div>
+      <ul class="toc-list">
+        <li><a href="#section-1"><span class="toc-num">01</span>1. Pendahuluan &amp; Latar Belakang</a></li>
+        <li><a href="#section-2"><span class="toc-num">02</span>2. Arsitektur Sistem &amp; Data</a></li>
+        <li><a href="#section-5"><span class="toc-num">03</span>Modul 1: Settings &amp; System Configurations</a></li>
+        <li><a href="#section-6"><span class="toc-num">04</span>Modul 2: Master Data Management</a></li>
+        <li><a href="#section-7"><span class="toc-num">05</span>Modul 3: Moneta (Financial Operations)</a></li>
+        <li><a href="#section-8"><span class="toc-num">06</span>Modul 4: Ares (Heavy Machinery &amp; Fleet Management)</a></li>
+        <li><a href="#section-9"><span class="toc-num">07</span>Modul 5: Approvals (Workflow Engine)</a></li>
+        <li><a href="#section-10"><span class="toc-num">08</span>Modul 6: Helios (Ticketing System)</a></li>
+        <li><a href="#section-11"><span class="toc-num">09</span>Modul 7: Logs &amp; Audit Trails</a></li>
+        <li><a href="#section-12"><span class="toc-num">10</span>3. Kebutuhan Non-Fungsional</a></li>
+        <li><a href="#section-13"><span class="toc-num">11</span>4. Kesimpulan &amp; Roadmap</a></li>
+      </ul>
+    </nav>
+    
+    <!-- Main Content Body -->
+    <main>
+    
+      <p>CREATIVE-X</p>
+<p>Dokumen Spesifikasi Kebutuhan Produk ERP Internal Terintegrasi: Sistem Operasional Alat Berat, Manajemen Keuangan Arus Kas, dan Mesin Otorisasi Persetujuan.</p>
+<p><strong>PT Multicrane Perkasa</strong><br></p>
+<p>Versi Dokumen: 1.0.0 — Stable Commercial<br></p>
+<p>Tanggal Rilis: 30 Mei 2026<br></p>
+<p>Penulis: IT &amp; Software Development Division</p>
+
+
+    <div class="section" id="section-1">
+      <div class="section-header">
+        <div class="section-num">01</div>
+        <h2 class="section-title">1. Pendahuluan &amp; Latar Belakang</h2>
+      </div>
+      <div class="content">
+<h3 class="sub-title">1.1 Latar Belakang</h3>
+<p>PT Multicrane Perkasa sebagai salah satu perusahaan distribusi dan layanan alat berat terkemuka di Indonesia membutuhkan sistem terintegrasi yang mampu menyelaraskan operasional lapangan dan administrasi keuangan. Sebelumnya, terdapat kendala akibat fragmentasi data antara pelacakan status unit alat berat di lapangan (hours meter, servis, garansi) dengan administrasi keuangan (penagihan piutang, kasbon karyawan, komisi agen).</p>
+<p>Data yang tersebar di berbagai platform pihak ketiga, salah satunya <strong>Accurate Online (AOL)</strong> untuk pencatatan akuntansi dan sistem HRIS untuk kepegawaian, memicu redundansi kerja dan keterlambatan pengambilan keputusan. Oleh karena itu, platform <strong>Creative-X</strong> dikembangkan sebagai solusi enterprise terpusat (ERP) guna menjembatani sistem transaksional akuntansi eksternal, manajemen data kepegawaian, dan operasional unit alat berat secara real-time.</p>
+<h3 class="sub-title">1.2 Visi &amp; Tujuan Creative-X</h3>
+<p><strong>Creative-X</strong> dirancang dengan visi menjadi *&quot;Single Source of Truth&quot;* (Satu Sumber Kebenaran Data) bagi seluruh operasional perusahaan.</p>
+<p>Tujuan utama aplikasi meliputi:</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">1. </strong> <strong>Mengurangi Silo Data</strong>: Mengintegrasikan data keuangan dari Accurate Online dengan data operasional lapangan.</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">2. </strong> <strong>Otomatisasi Alur Kerja (Workflow Automation)</strong>: Mengurangi proses manual melalui otomatisasi pengingat piutang (*AR Reminders*) dan persetujuan bertingkat (*Approval Engine*).</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">3. </strong> <strong>Efisiensi Lapangan</strong>: Memfasilitasi mekanik dan operator dalam pelaporan unit alat berat secara mobile dan terstandarisasi.</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">4. </strong> <strong>Keamanan &amp; Skalabilitas Tinggi</strong>: Menerapkan arsitektur multi-database, manajemen otorisasi ketat berbasis peran (*RBAC*), dan sistem pencatatan audit trail menyeluruh.</p>
+<h3 class="sub-title">1.3 Sasaran Pengguna (Target Audiens)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Super Admin &amp; Tim IT</strong>: Mengonfigurasi parameter sistem, organisasi, RBAC, menu, dan integrasi API.</li>
+            <li><strong>Tim Finansial &amp; Accounting (AR/AP)</strong>: Memantau tagihan pelanggan, outstanding invoice, kasbon operasional, dan komisi sales.</li>
+            <li><strong>Tim Operasional Fleet (Ares Staff &amp; Managers)</strong>: Memantau performa, utilisasi, dan riwayat pemeliharaan alat berat.</li>
+            <li><strong>Karyawan / Staf Lapangan (Mekanik &amp; Operator)</strong>: Melaporkan aktivitas harian mesin (DFR), pengisian kasbon (PS), dan pembuatan laporan teknis servis (TSR).</li>
+            <li><strong>Direksi &amp; Manajer (Approver)</strong>: Menyetujui pengajuan kasbon, pengeluaran settlement, dan perbaikan darurat alat berat.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+    <div class="section" id="section-2">
+      <div class="section-header">
+        <div class="section-num">02</div>
+        <h2 class="section-title">2. Arsitektur Sistem &amp; Data</h2>
+      </div>
+      <div class="content">
+<p>Sistem Creative-X dirancang menggunakan arsitektur modern berkinerja tinggi:</p>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Frontend</strong>: Next.js (React) dengan antarmuka premium berbasis Vanilla CSS yang adaptif (Light/Dark mode) serta visualisasi grafik interaktif.</li>
+            <li><strong>Backend</strong>: Go (Golang) menggunakan framework Gin Gonic dengan arsitektur modular yang bersih.</li>
+            <li><strong>Database</strong>: PostgreSQL (Supabase) dengan pemisahan schema dan pendekatan Multi-Database.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+      <div class="callout callout-info" style="margin: 20px 0;">
+        <div class="callout-icon">📊</div>
+        <div class="callout-text">
+          <strong style="color: var(--accent2);">Visualisasi Diagram Alur Sistem (Mermaid Diagram)</strong>
+          <pre style="font-family: monospace; font-size: 11px; color: var(--text-muted); background: var(--surface2); padding: 12px; border-radius: 6px; overflow-x: auto; margin-top: 8px; border: 1px solid var(--border);">graph TD
+    Client[Next.js Frontend Client] --&gt;|HTTPS / JWT| Gateway[Go Backend API - Gin]
+    
+    subgraph Backend Core Modules
+        Gateway --&gt; Auth[Auth Module]
+        Gateway --&gt; Users[Users Module]
+        Gateway --&gt; Settings[Settings Module]
+        Gateway --&gt; MasterData[Masterdata Module]
+        Gateway --&gt; Moneta[Moneta Module]
+        Gateway --&gt; Ares[Ares Module]
+        Gateway --&gt; Approvals[Approvals Engine]
+        Gateway --&gt; Helios[Helios Notification]
+    end
+    
+    subgraph Multi-Database PostgreSQL
+        SettingsDB[(Settings DB - t_cfg_*)]
+        CoreDB[(Core DB - t_core_*)]
+        LogsDB[(Logs DB - application_logs)]
+        
+        Auth --&gt; CoreDB
+        Users --&gt; CoreDB
+        Settings --&gt; SettingsDB
+        MasterData --&gt; CoreDB
+        Moneta --&gt; CoreDB
+        Ares --&gt; CoreDB
+        Approvals --&gt; CoreDB
+        Helios --&gt; LogsDB
+    end
+    
+    subgraph External Integrations
+        Moneta --&gt;|OAuth 2.0| AOL[Accurate Online API]
+        Users --&gt;|REST API| HRIS[Internal HRIS System]
+    end
+</pre>
+        </div>
+      </div>
+<h3 class="sub-title">2.1 Pendekatan Multi-Database</h3>
+<p>Untuk menjamin keamanan data global dan memberikan performa optimal, sistem membagi tabel ke dalam tiga domain utama:</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">1. </strong> <strong>Settings Database (<code>settingsDB</code>)</strong>:</p>
+<p>Menyimpan seluruh konfigurasi global sistem dengan prefix tabel <code>t_cfg_</code>. Domain ini dirancang independen agar konfigurasi organisasi dapat digunakan kembali jika aplikasi dikembangkan menjadi multi-tenant.</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">2. </strong> <strong>Core Database (<code>coreDB</code>)</strong>:</p>
+<p>Menyimpan data transaksi operasional inti perusahaan, data pengguna (<code>t_core_users</code>), relasi hak akses pengguna (<code>t_core_user_roles</code>), alat berat (<code>ares</code> schema), masterdata pelanggan (<code>t_md_*</code>), dan data persetujuan (<code>t_core_approvals</code>).</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">3. </strong> <strong>Application Logs (<code>application_logs</code> schema)</strong>:</p>
+<p>Menyimpan log audit trail aktivitas pengguna (<code>t_logs_users</code>), catatan sinkronisasi eksternal (<code>t_logs_system_syncs</code>), log pengiriman notifikasi piutang (<code>t_logs_ar_notifications</code>), dan notifikasi sistem (<code>t_logs_system_notifications</code>).</p>
+<h3 class="sub-title">2.2 Kebijakan Berbagi Database (Co-existence: Creative-X &amp; Talos)</h3>
+<p>Selama masa pengembangan, sistem Creative-X berjalan berdampingan dengan platform sekunder <strong>Talos</strong> pada satu instance Supabase PostgreSQL yang sama.</p>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Pola Isolasi</strong>: Data transaksional diisolasi menggunakan schema terpisah (<code>ares</code>, <code>moneta</code> vs <code>talos</code> schema).</li>
+            <li><strong>Pola Bersama (Shared Schema)</strong>: Kedua aplikasi berbagi data global pada schema <code>public</code> terutama untuk tabel pengguna (<code>t_core_users</code>), roles, dan settings global. Pemuatan menu sidebar disaring berdasarkan atribut scope (<code>app_scope</code> = <code>&#039;creative-x&#039;</code> atau <code>&#039;all&#039;</code>) untuk menghindari bentrokan menu di antarmuka masing-masing aplikasi.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+    <div class="section" id="section-5">
+      <div class="section-header">
+        <div class="section-num">03</div>
+        <h2 class="section-title">Modul 1: Settings &amp; System Configurations</h2>
+      </div>
+      <div class="content">
+<p>Modul Settings bertindak sebagai konsol kemudi utama (Super Admin Panel) untuk melakukan pengaturan data statis, mengontrol keamanan aplikasi melalui autentikasi JWT dan RBAC dinamis, menata navigasi sidebar, profil pengguna, dan menyetel parameter integrasi pihak ketiga.</p>
+
+      <div class="callout callout-info" style="margin: 20px 0;">
+        <div class="callout-icon">📊</div>
+        <div class="callout-text">
+          <strong style="color: var(--accent2);">Visualisasi Alur Autentikasi &amp; Konfigurasi Sistem</strong>
+          <pre style="font-family: monospace; font-size: 11px; color: var(--text-muted); background: var(--surface2); padding: 12px; border-radius: 6px; overflow-x: auto; margin-top: 8px; border: 1px solid var(--border);">
+  [Autentikasi & Profil Pengguna]
+  Login Form --&gt; Auth Module --&gt; JWT Generation --&gt; Active Session (RBAC) --&gt; Account Linking (HRIS &amp; AOL)
+  
+  [Konsol Konfigurasi & Setelan]
+  Settings Panel --&gt; Regions / Divisions / Departments (Struktur Organisasi)
+                 --&gt; Roles &amp; Permissions (RBAC Engine)
+                 --&gt; Menu &amp; Sidebar Layout (Dynamic Menus)
+                 --&gt; AOL Gateway Credentials (Integrations)
+          </pre>
+        </div>
+      </div>
+
+<h3 class="sub-title">1. Submodul: Autentikasi Keamanan (JWT Auth)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Mengamankan semua komunikasi API menggunakan JSON Web Token (JWT).</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Login menggunakan kombinasi Username/Email dan Password terenkripsi (Bcrypt).</li>
+            <li>Pengeluaran <code>Access Token</code> (umur pendek) dan <code>Refresh Token</code> (umur panjang) yang aman di HTTP-only cookie.</li>
+            <li>Validasi token di backend menggunakan middleware (<code>JWTMiddleware</code>) untuk memverifikasi hak akses.</li>
+            <li>Fitur keluar logis (*Logout*) untuk membatalkan keabsahan sesi token.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">2. Submodul: Profiling &amp; Struktur Pengguna (Users Directory)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Mengelola profil data karyawan secara terperinci lengkap dengan hierarki struktur organisasi tempat mereka bekerja.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Informasi Data Kaya: Nama lengkap, email, nomor HP, tanggal lahir, tanggal bergabung, NIK (Nomor Induk Karyawan), NPWP, Level Otoritas (<code>Staff</code>, <code>Supervisor</code>, <code>Manager</code>, <code>Director</code>), dan Jabatan pekerjaan (<code>Job Title</code>).</li>
+            <li>Penugasan Organisasi: Penugasan terikat pada satu <strong>Region</strong> (Wilayah), <strong>Division</strong> (Divisi), dan <strong>Department</strong> (Departemen) guna membatasi cakupan wilayah operasional dan visualisasi data transaksional pengguna di antarmuka.</li>
+            <li>Hierarki Atasan Langsung (<code>Supervisor ID</code>): Mendefinisikan struktur pelaporan langsung (self-referencing user relation) yang akan digunakan secara otomatis oleh *Approvals Engine* untuk persetujuan berjenjang.</li>
+            <li>Unggah Avatar: Pengguna dapat mengunggah foto profil yang divalidasi format dan ukurannya di backend, lalu disimpan di penyimpanan lokal <code>/uploads/avatars/</code>.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">3. Submodul: Integrasi Multi-Identitas Pengguna (Account Linking)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Menghubungkan akun internal pengguna Creative-X dengan identitas unik mereka di sistem eksternal.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>HRIS Link</strong>: Menautkan <code>hris_user_id</code> pengguna dengan data kepegawaian dari sistem HRIS perusahaan untuk otomatisasi pembaruan profil kerja.</li>
+            <li><strong>Accurate Online Link</strong>: Menautkan <code>aol_user_id</code> atau <code>aol_supplier_id</code> (untuk agen eksternal) untuk memproses pencatatan transaksi kasbon dan klaim biaya operasional secara langsung ke buku besar Accurate.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">4. Submodul: Regions Management</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Mengelola daftar wilayah geografis operasional perusahaan.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>CRUD Wilayah lengkap dengan validasi keunikan <strong>Region Code</strong>.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">5. Submodul: Organizational Structures (Divisions &amp; Departments)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Mengelola pemetaan struktur departemen kerja di bawah divisi bisnis tingkat atas.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Divisi: CRUD divisi utama (seperti *Operations*, *ICT*, *Customer Care*, *Finance*).</li>
+            <li>Departemen: CRUD departemen kerja (seperti *ICT Development*, *Account Receivable*, *Parts Logistics*) dengan penetapan divisi induk (*Division ID*) melalui dropdown dinamis di frontend.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">6. Submodul: Role-Based Access Control (RBAC Engine)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Mengelola hak akses sistem secara atomik dan dinamis untuk meminimalkan risiko keamanan data.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Permissions Registry</strong>: Mendaftarkan kode hak akses atomik baru ke database (contoh: <code>view-regions</code>, <code>moneta.ar-inflow.view</code>, <code>ares.equipments.create</code>).</li>
+            <li><strong>Role Registry</strong>: Membuat peran khusus (seperti *Super Admin*, *AR Supervisor*, *Mechanic*, *Operator*).</li>
+            <li><strong>Assign Permissions</strong>: Dialog khusus (<code>RolePermissionsDialog</code>) untuk menautkan/mencentang hak akses mana saja yang boleh digunakan oleh suatu Role secara instan ke tabel relasi <code>t_cfg_role_permissions</code>.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">7. Submodul: Dynamic Menu Management (Sidebar Layout)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Mengatur struktur navigasi sidebar utama di frontend secara dinamis berdasarkan data menu yang disimpan di database.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Hierarki Menu: Mendukung menu bersarang (parent dan sub-menu) yang dirender otomatis dengan simbol indentasi (↳) di tabel pengaturan.</li>
+            <li>Visual Icon &amp; Route: Mengatur nama ikon Lucide (seperti <code>LayoutDashboard</code>, <code>Wrench</code>, <code>Settings</code>) dan rute URL tujuan navigasi (seperti <code>/moneta/ar-inflow</code>).</li>
+            <li>Required Permission: Menetapkan kode hak akses wajib agar menu tersebut muncul di sidebar pengguna.</li>
+            <li>Scope filtering: Memilah menu spesifik Creative-X vs Talos.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">8. Submodul: External Integration Settings (AOL Gateway)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Pusat kendali kredensial penghubung aplikasi dengan <strong>Accurate Online (AOL)</strong> API.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>OAuth2 Config: Mengelola parameters rahasia Client ID, Client Secret, Token Akses (<code>access_token</code>), dan Token Pembaruan (<code>refresh_token</code>).</li>
+            <li>Automated Reminders Toggle: Sakelar global untuk mengaktifkan/menonaktifkan pengiriman email penagihan piutang otomatis ke pelanggan.</li>
+            <li>Sync Scheduler: Penjadwalan jam sinkronisasi data harian otomatis (format <code>HH:mm</code>).</li>
+            <li>AOL Database Connector: Menghubungkan ID database Accurate Online (<code>aol_database_id</code>).</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 class="sub-sub-title">Skema Tabel Pendukung: <code>public</code> &amp; <code>t_cfg_*</code></h4>
+<pre style="font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; color: var(--text); margin-bottom: 20px;"><code>-- 1. Tabel Pengguna Utama
+CREATE TABLE t_core_users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    username VARCHAR(128) UNIQUE NOT NULL,
+    email VARCHAR(128) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(64),
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    last_login_at TIMESTAMP,
+    region_id UUID REFERENCES t_cfg_regions(id) ON DELETE SET NULL,
+    division_id UUID REFERENCES t_cfg_divisions(id) ON DELETE SET NULL,
+    department_id UUID REFERENCES t_cfg_departments(id) ON DELETE SET NULL,
+    nik VARCHAR(32) UNIQUE,
+    dob TIMESTAMP,
+    join_date TIMESTAMP,
+    supervisor_id UUID REFERENCES t_core_users(id) ON DELETE SET NULL,
+    gender VARCHAR(16),
+    avatar_url VARCHAR(255),
+    job_title VARCHAR(128),
+    npwp VARCHAR(32),
+    user_level VARCHAR(64) NOT NULL DEFAULT 'Staff',
+    aol_user_id VARCHAR(128) UNIQUE,
+    aol_supplier_id VARCHAR(128),
+    hris_user_id VARCHAR(128) UNIQUE,
+    sync_metadata JSONB
+);
+
+-- 2. Tabel Penghubung Many-to-Many User &amp; Roles (RBAC)
+CREATE TABLE t_core_user_roles (
+    user_id UUID NOT NULL REFERENCES t_core_users(id) ON DELETE CASCADE,
+    role_id UUID NOT NULL REFERENCES t_cfg_roles(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, role_id)
+);
+
+-- 3. Tabel Wilayah
+CREATE TABLE t_cfg_regions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    code VARCHAR(32) UNIQUE NOT NULL,
+    name VARCHAR(128) NOT NULL
+);
+
+-- 4. Tabel Divisi
+CREATE TABLE t_cfg_divisions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    code VARCHAR(32) UNIQUE NOT NULL,
+    name VARCHAR(128) NOT NULL
+);
+
+-- 5. Tabel Departemen
+CREATE TABLE t_cfg_departments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    code VARCHAR(32) UNIQUE NOT NULL,
+    name VARCHAR(128) NOT NULL,
+    division_id UUID NOT NULL REFERENCES t_cfg_divisions(id) ON DELETE CASCADE
+);
+
+-- 6. Tabel Roles
+CREATE TABLE t_cfg_roles (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    code VARCHAR(32) UNIQUE NOT NULL,
+    name VARCHAR(128) NOT NULL
+);
+
+-- 7. Tabel Permissions
+CREATE TABLE t_cfg_permissions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    code VARCHAR(64) UNIQUE NOT NULL,
+    name VARCHAR(128) NOT NULL
+);
+
+-- 8. Tabel Relasi Many-to-Many Roles &amp; Permissions
+CREATE TABLE t_cfg_role_permissions (
+    role_id UUID NOT NULL REFERENCES t_cfg_roles(id) ON DELETE CASCADE,
+    permission_id UUID NOT NULL REFERENCES t_cfg_permissions(id) ON DELETE CASCADE,
+    PRIMARY KEY (role_id, permission_id)
+);
+
+-- 9. Tabel Menu Sidebar
+CREATE TABLE t_cfg_menus (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    name VARCHAR(128) NOT NULL,
+    route VARCHAR(128) NOT NULL,
+    icon VARCHAR(64) NOT NULL,
+    parent_id UUID REFERENCES t_cfg_menus(id) ON DELETE SET NULL,
+    "order" INTEGER NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    required_permission VARCHAR(128),
+    app_scope VARCHAR(64) NOT NULL DEFAULT 'creative-x'
+);
+
+-- 10. Tabel Integrasi Eksternal
+CREATE TABLE t_cfg_external_apps (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    code VARCHAR(32) UNIQUE NOT NULL,
+    name VARCHAR(128) NOT NULL,
+    client_id VARCHAR(255),
+    client_secret VARCHAR(255),
+    access_token TEXT,
+    refresh_token TEXT,
+    expires_at TIMESTAMP,
+    aol_database_id VARCHAR(128),
+    status VARCHAR(32) NOT NULL DEFAULT 'active',
+    is_automation_enabled BOOLEAN NOT NULL DEFAULT false,
+    sync_time VARCHAR(64) NOT NULL DEFAULT '08:00'
+);
+</code></pre>
+      </div>
+    </div>
+
+    <div class="section" id="section-6">
+      <div class="section-header">
+        <div class="section-num">04</div>
+        <h2 class="section-title">Modul 2: Master Data Management</h2>
+      </div>
+      <div class="content">
+        <!-- INCLUDE_FILE: shared/master_data.html -->
+      </div>
+    </div>
+
+    <div class="section" id="section-7">
+      <div class="section-header">
+        <div class="section-num">05</div>
+        <h2 class="section-title">Modul 3: Moneta (Financial Operations)</h2>
+      </div>
+      <div class="content">
+<p>Moneta adalah modul finansial inti Creative-X. Modul ini berfokus pada pemantauan arus kas masuk piutang (*AR Inflow*), pengingat jatuh tempo otomatis, pengelolaan dana tunai kasbon karyawan (*Pinjaman Sementara - PS*), dan kalkulator komisi penjualan.</p>
+
+      <div class="callout callout-info" style="margin: 20px 0;">
+        <div class="callout-icon">📊</div>
+        <div class="callout-text">
+          <strong style="color: var(--accent2);">Visualisasi Diagram Alur Sistem (Mermaid Diagram)</strong>
+          <pre style="font-family: monospace; font-size: 11px; color: var(--text-muted); background: var(--surface2); padding: 12px; border-radius: 6px; overflow-x: auto; margin-top: 8px; border: 1px solid var(--border);">graph TD
+    AOL[Accurate Online] --&gt;|Sync Invoices| ARInflow[AR Inflow Submodule]
+    ARInflow --&gt; Reminders[Automated Email Reminders]
+    ARInflow --&gt; SpecialTreatments[Special Due Dates &amp; Customers]
+    
+    PSRequest[PS Cash Advance Request] --&gt;|Approval Engine| PSApproved[Disbursed &amp; AOL Synced]
+    PSApproved --&gt; PSSettlement[Settlement &amp; Expense Report]
+    PSSettlement --&gt;|Verify &amp; Approval| Closed[PS Closed]
+</pre>
+        </div>
+      </div>
+<h3 class="sub-title">1. Submodul: AR Inflow Management (Piutang Pelanggan)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Menampilkan dan melacak status seluruh faktur penjualan (*Invoices*) pelanggan PT Multicrane Perkasa yang ditarik secara real-time/terjadwal dari Accurate Online.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Dasbor visualisasi ringkasan piutang: Total Invoice, Jumlah Invoice Terbayar (*Paid*), Belum Terbayar (*Unpaid*), dan Terbayar Sebagian (*Partial*).</li>
+            <li>Filter pencarian faktur berdasarkan nomor faktur, rentang tanggal, status pembayaran, dan nama pelanggan.</li>
+            <li>Penghitungan umur piutang (*Aging Schedule*) untuk menganalisis risiko penagihan.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">2. Submodul: AR Invoice Special Treatments</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Memberikan fleksibilitas khusus pada penagihan piutang pelanggan strategis tanpa mengacaukan pembukuan utama di Accurate Online.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Special Customer Grace Period</strong>: Menetapkan hari kelonggaran tambahan secara global untuk pelanggan tertentu (contoh: tambahan <code>grace_period_days</code> = 14 hari) sebelum notifikasi peringatan mulai dikirimkan.</li>
+            <li><strong>Special Due Date Treatment</strong>: Menetapkan tanggal jatuh tempo khusus secara sepihak untuk nomor faktur tertentu di tabel <code>t_ar_invoice_special_due_dates</code>.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">3. Submodul: Automated AR Reminders (Notifikasi Piutang)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Sistem pengingat otomatis untuk mengirimkan email tagihan kepada pelanggan sebelum dan pada saat jatuh tempo guna mempercepat arus kas masuk (*inflow*).</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Configurable Milestones</strong>: Super Admin dapat mengatur interval hari pengiriman (contoh: pengingat ke-1 dikirim H-7 jatuh tempo, pengingat ke-2 dikirim H-3, pengingat ke-3 dikirim pas hari H jatuh tempo).</li>
+            <li><strong>Rich Email Templates</strong>: Menghasilkan draf email penagihan dinamis lengkap dengan daftar tagihan, total outstanding, dan tautan pembayaran.</li>
+            <li><strong>Notification Logs</strong>: Menyimpan log pengiriman notifikasi (<code>application_logs.t_logs_ar_notifications</code>) untuk melacak status terkirim (*sent*) atau gagal (*failed*) beserta pesan kesalahan dari server SMTP.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">4. Submodul: Pinjaman Sementara (PS / Cash Advance)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Memfasilitasi karyawan dalam pengajuan dana tunai kasbon operasional kantor sebelum beraktivitas di lapangan (misal: perjalanan dinas, pembelian suku cadang darurat).</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Form Pengajuan Kasbon: Input jumlah nominal dana, tujuan penggunaan (*purpose*), rekening bank tujuan transfer (Nama Bank, Nomor Rekening), dan estimasi tanggal penyelesaian kasbon.</li>
+            <li>Integrasi Approvals: Pengajuan otomatis masuk ke alur persetujuan bertingkat.</li>
+            <li><strong>Accurate Online Bill Creation</strong>: Setelah disetujui penuh oleh jajaran manajemen, status kasbon berubah menjadi <code>disbursed</code>. Sistem secara otomatis membuat draft dokumen transaksi pembelian (*Purchase Bill*) di Accurate Online untuk proses pengeluaran dana akuntansi, lengkap dengan penomoran berurutan otomatis (contoh: <code>PS26.299</code>) berdasarkan transaksi live terakhir di AOL.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">5. Submodul: Pinjaman Sementara Settlement (Penyelesaian Kasbon)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Proses pertanggungjawaban karyawan atas penggunaan dana kasbon setelah aktivitas lapangan selesai.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Expense Breakdown</strong>: Karyawan menginput pos-pos pengeluaran riil berdasarkan kategori resmi (contoh: hotel, transportasi, makan) lengkap dengan deskripsi dan jumlah nominal.</li>
+            <li><strong>Attachment Proofs</strong>: Mengunggah file bukti kuitansi/nota belanja digital ke cloud server.</li>
+            <li><strong>Refund / Overspent Calculation</strong>: Sistem menghitung selisih otomatis. Jika sisa dana kasbon masih ada, sistem meminta karyawan mengunggah bukti transfer pengembalian dana (*cash return*). Jika pengeluaran melebihi nominal kasbon, sistem memproses klaim ganti rugi (*reimbursement*).</li>
+            <li>Persetujuan Settlement: Alur persetujuan bertingkat atas rincian pengeluaran oleh Finance dan Supervisor. Setelah disetujui, kasbon ditandai selesai (<code>settled</code>).</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">6. Submodul: Commission Calculator (Kalkulator Komisi)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Modul pembantu bagi sales dan agen eksternal untuk menghitung persentase komisi atas penjualan unit alat berat yang berhasil ditagih piutangnya (*AR cleared*).</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>Formula komisi yang disesuaikan dengan profit margin dan tipe unit mesin yang terjual.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h4 class="sub-sub-title">Skema Tabel Pendukung: <code>moneta.t_ar_*</code> &amp; <code>moneta.t_ps_*</code></h4>
+<pre style="font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; color: var(--text); margin-bottom: 20px;"><code>-- Buat schema moneta jika belum ada
+CREATE SCHEMA IF NOT EXISTS moneta;
+
+-- 1. Tabel Faktur Piutang
+CREATE TABLE moneta.t_ar_invoices (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    aol_id VARCHAR(64) UNIQUE NOT NULL,
+    slug VARCHAR(64) UNIQUE,
+    invoice_number VARCHAR(64) NOT NULL,
+    customer_name VARCHAR(255) NOT NULL,
+    customer_aol_id VARCHAR(64),
+    customer_email VARCHAR(255),
+    customer_phone VARCHAR(64),
+    invoice_date TIMESTAMP NOT NULL,
+    due_date TIMESTAMP NOT NULL,
+    total_amount DECIMAL(20,2) NOT NULL,
+    balance_amount DECIMAL(20,2) NOT NULL,
+    status VARCHAR(32) NOT NULL, -- &#039;UNPAID&#039;, &#039;PARTIAL&#039;, &#039;PAID&#039;
+    sync_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- 2. Tabel Konfigurasi Hari Pengingat Tagihan
+CREATE TABLE moneta.t_ar_reminder_configs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    days_before INTEGER NOT NULL, -- e.g. 7, 3, 0
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+-- 3. Tabel Kelonggaran Hari Pelanggan Khusus
+CREATE TABLE moneta.t_ar_special_customers (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    customer_aol_id VARCHAR(64) UNIQUE NOT NULL,
+    customer_name VARCHAR(255) NOT NULL,
+    grace_period_days INTEGER NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+-- 4. Tabel Tanggal Jatuh Tempo Khusus Invoice
+CREATE TABLE moneta.t_ar_invoice_special_due_dates (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    invoice_aol_id VARCHAR(64) UNIQUE NOT NULL,
+    special_due_date TIMESTAMP NOT NULL
+);
+
+-- 5. Tabel Pengajuan Pinjaman Sementara
+CREATE TABLE moneta.t_ps_loans (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    user_id UUID NOT NULL REFERENCES t_core_users(id),
+    amount DECIMAL(20,2) NOT NULL,
+    purpose TEXT NOT NULL,
+    bank_name VARCHAR(128) NOT NULL,
+    bank_account_number VARCHAR(64) NOT NULL,
+    estimated_settlement_date TIMESTAMP NOT NULL,
+    settlement_date TIMESTAMP,
+    status VARCHAR(32) NOT NULL DEFAULT &#039;pending_approval&#039;, -- &#039;draft&#039;, &#039;pending_approval&#039;, &#039;approved&#039;, &#039;rejected&#039;, &#039;disbursed&#039;, &#039;settled&#039;, &#039;cancelled&#039;
+    current_approval_level INTEGER NOT NULL DEFAULT 1,
+    aol_ps_number VARCHAR(64)
+);
+
+-- 6. Tabel Kategori Pengeluaran Settlement
+CREATE TABLE moneta.t_ps_settlement_categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    name VARCHAR(255) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+-- 7. Tabel Settlement Pinjaman Sementara
+CREATE TABLE moneta.t_ps_settlements (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    loan_id UUID NOT NULL REFERENCES moneta.t_ps_loans(id),
+    user_id UUID NOT NULL REFERENCES t_core_users(id),
+    total_amount DECIMAL(20,2) NOT NULL,
+    remaining_amount DECIMAL(20,2) NOT NULL DEFAULT 0,
+    status VARCHAR(32) NOT NULL DEFAULT &#039;draft&#039;, -- &#039;draft&#039;, &#039;pending_approval&#039;, &#039;approved&#039;, &#039;rejected&#039;
+    current_approval_level INTEGER NOT NULL DEFAULT 1,
+    notes TEXT,
+    settlement_type VARCHAR(64) NOT NULL DEFAULT &#039;Others&#039;,
+    payment_type VARCHAR(32) NOT NULL DEFAULT &#039;cash&#039;, -- &#039;cash&#039;, &#039;transfer&#039;
+    bank_name VARCHAR(128),
+    bank_account_name VARCHAR(255),
+    bank_account_number VARCHAR(64),
+    attachment_url VARCHAR(512)
+);
+
+-- 8. Tabel Detail Rincian Biaya Settlement
+CREATE TABLE moneta.t_ps_settlement_details (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    settlement_id UUID NOT NULL REFERENCES moneta.t_ps_settlements(id) ON DELETE CASCADE,
+    category_id UUID REFERENCES moneta.t_ps_settlement_categories(id) ON DELETE SET NULL,
+    custom_category_name VARCHAR(255),
+    description TEXT NOT NULL,
+    amount DECIMAL(20,2) NOT NULL
+);
+
+-- 9. Tabel Log Riwayat Aksi Settlement
+CREATE TABLE moneta.t_ps_settlement_logs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    settlement_id UUID NOT NULL REFERENCES moneta.t_ps_settlements(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES t_core_users(id),
+    action VARCHAR(64) NOT NULL,
+    description TEXT NOT NULL,
+    notes TEXT
+);
+</code></pre>
+</div>
+</div>
+
+    <div class="section" id="section-8">
+      <div class="section-header">
+        <div class="section-num">06</div>
+        <h2 class="section-title">Modul 4: Ares (Heavy Machinery &amp; Fleet Management)</h2>
+      </div>
+      <div class="content">
+<p>Ares bertanggung jawab penuh atas manajemen aset fisik alat berat (*Heavy Machinery*), pencatatan jam kerja mesin (*Hours Meter - HM*), pemantauan masa garansi unit, laporan aktivitas harian lapangan, serta pemeliharaan berkala unit oleh tim mekanik.</p>
+
+      <div class="callout callout-info" style="margin: 20px 0;">
+        <div class="callout-icon">📊</div>
+        <div class="callout-text">
+          <strong style="color: var(--accent2);">Visualisasi Diagram Alur Sistem (Mermaid Diagram)</strong>
+          <pre style="font-family: monospace; font-size: 11px; color: var(--text-muted); background: var(--surface2); padding: 12px; border-radius: 6px; overflow-x: auto; margin-top: 8px; border: 1px solid var(--border);">graph TD
+    Brand[Brands] --&gt; Category[Categories] --&gt; Model[Models] --&gt; Machine[Machines / Assets]
+    Machine --&gt; MachineStatus[Status: Site Location &amp; Hours Meter]
+    
+    MachineStatus --&gt; DFR[Daily Field Reports]
+    MachineStatus --&gt; TSR[Technical Service Reports]
+    MachineStatus --&gt; WO[Work Orders &amp; Maintenance]
+    MachineStatus --&gt; Warranty[Warranty &amp; Claims]
+</pre>
+        </div>
+      </div>
+<h3 class="sub-title">1. Submodul: Fleet &amp; Asset Registry</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Struktur hierarkis untuk mendaftarkan dan melacak spesifikasi teknis unit alat berat milik perusahaan atau unit sewaan pelanggan.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Brand</strong>: Mengelola daftar pabrikan merek alat berat (contoh: Kobelco, Kato, Tadano, Zoomlion, Sennebogen).</li>
+            <li><strong>Category</strong>: Mengelompokkan jenis alat berat (contoh: *Excavator*, *Crawler Crane*, *Mobile Crane*, *Forklift*).</li>
+            <li><strong>Model</strong>: Mengelola nomor model spesifik alat (contoh: <code>KOBELCO SK200-10</code>, <code>TADANO GR-500EX</code>).</li>
+            <li><strong>Machine Asset Registry</strong>: Mendaftarkan nomor seri fisik unit (*Serial Number*) unik, keterkaitan dengan model, tahun produksi unit, serta kepemilikan pelanggan (<code>customer_aol_id</code>).</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">2. Submodul: Machine Status &amp; Location Tracker</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Memantau lokasi penempatan unit dan jam kerja mesin terkini untuk kebutuhan penjadwalan servis.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Site Location</strong>: Mencatat lokasi geografis aktif unit alat berat (contoh: Pertambangan Morowali, Halmahera, Pelabuhan Tanjung Priok).</li>
+            <li><strong>Hours Meter (HM) Tracker</strong>: Mencatat akumulasi jam operasi mesin secara berkala.</li>
+            <li><strong>Last Service Date</strong>: Menyimpan tanggal pemeliharaan fisik terakhir guna menghindari keterlambatan perawatan berkala.</li>
+            <li><strong>Status Lifecycle</strong>: Menampilkan keadaan unit (<code>Active</code>, <code>Maintenance</code>, <code>Breakdown</code>, <code>Inactive</code>).</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">3. Submodul: Daily Field Reports (DFR)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Memfasilitasi operator alat berat di lapangan untuk melaporkan lembar aktivitas harian mesin.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>Input jam mulai dan selesai operasi, pencatatan konsumsi bahan bakar (liter), kondisi cuaca pertambangan, dan catatan isu minor mesin.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">4. Submodul: Technical Service Reports (TSR)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Lembar laporan kerja komprehensif yang dibuat oleh mekanik setelah melakukan perbaikan atau servis alat berat di lapangan.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>Detail pekerjaan servis yang dilakukan, rekomendasi penggantian suku cadang (*spare parts*), status unit pasca-servis, serta tanda tangan digital persetujuan pelanggan di lapangan.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">5. Submodul: Work Orders (WO)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Penerbitan instruksi penugasan kerja perbaikan unit alat berat kepada tim mekanik.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>Penugasan tiket kerusakan, alokasi suku cadang dari gudang, serta estimasi waktu pengerjaan (SLA).</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">6. Submodul: Warranty Management</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Pelacakan masa berlaku garansi unit alat berat baru atau garansi komponen suku cadang pengganti.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>Pengingat otomatis masa kedaluwarsa garansi dan form pengajuan klaim garansi ke pabrikan (*vendor claim*).</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">7. Submodul: KPI Dashboard (Fleet Analytics)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Visualisasi performa ketersediaan alat berat untuk pihak manajemen operasional.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Physical Availability (PA)</strong>: Persentase kesiapan fisik mesin untuk beroperasi.</li>
+            <li><strong>Utilization (UA)</strong>: Persentase tingkat penggunaan mesin dari waktu ketersediaannya.</li>
+            <li><strong>MTBF &amp; MTTR</strong>: *Mean Time Between Failures* (rata-rata waktu antar-kerusakan) dan *Mean Time To Repair* (rata-rata waktu durasi perbaikan unit).</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">8. Submodul: Mechanic Utility</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Aplikasi pembantu berbasis mobile bagi mekanik untuk mempermudah pemeriksaan unit.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>Lembar centang (*checklist*) inspeksi pra-operasi, kalkulator konversi HM, dan unduhan dokumen manual perbaikan (*shop manual*).</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h4 class="sub-sub-title">Skema Tabel Pendukung: <code>ares.t_eqp_*</code></h4>
+<pre style="font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; color: var(--text); margin-bottom: 20px;"><code>-- Buat schema ares jika belum ada
+CREATE SCHEMA IF NOT EXISTS ares;
+
+-- 1. Tabel Brand Alat Berat
+CREATE TABLE ares.t_eqp_brands (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    name VARCHAR(128) UNIQUE NOT NULL
+);
+
+-- 2. Tabel Kategori Jenis Alat
+CREATE TABLE ares.t_eqp_categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    brand_id UUID NOT NULL REFERENCES ares.t_eqp_brands(id) ON DELETE CASCADE,
+    name VARCHAR(128) NOT NULL
+);
+
+-- 3. Tabel Model Spesifik
+CREATE TABLE ares.t_eqp_models (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    category_id UUID NOT NULL REFERENCES ares.t_eqp_categories(id) ON DELETE CASCADE,
+    name VARCHAR(128) NOT NULL
+);
+
+-- 4. Tabel Aset Fisik Mesin Alat Berat
+CREATE TABLE ares.t_eqp_machines (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    serial_number VARCHAR(128) UNIQUE NOT NULL,
+    model_id UUID NOT NULL REFERENCES ares.t_eqp_models(id) ON DELETE RESTRICT,
+    customer_id UUID, -- Relasi opsional pelanggan internal
+    customer_aol_id VARCHAR(64), -- Tautan pelanggan di Accurate Online
+    site VARCHAR(255), -- Lokasi pertambangan/penempatan
+    &quot;year&quot; INTEGER,
+    hours_meter DECIMAL(12,2) NOT NULL DEFAULT 0,
+    last_service_date TIMESTAMP,
+    status VARCHAR(64) NOT NULL DEFAULT &#039;Active&#039; -- &#039;Active&#039;, &#039;Maintenance&#039;, &#039;Breakdown&#039;, &#039;Inactive&#039;
+);
+</code></pre>
+</div>
+</div>
+
+    <div class="section" id="section-9">
+      <div class="section-header">
+        <div class="section-num">07</div>
+        <h2 class="section-title">Modul 5: Approvals (Workflow Engine)</h2>
+      </div>
+      <div class="content">
+<p>Approvals adalah mesin otorisasi alur kerja generik di Creative-X. Modul ini bertindak sebagai State Machine untuk transaksi yang memerlukan otorisasi bertingkat sebelum dieksekusi secara sistemik (contoh: PS Loans, PS Settlements).</p>
+
+      <div class="callout callout-info" style="margin: 20px 0;">
+        <div class="callout-icon">📊</div>
+        <div class="callout-text">
+          <strong style="color: var(--accent2);">Visualisasi Diagram Alur Sistem (Mermaid Diagram)</strong>
+          <pre style="font-family: monospace; font-size: 11px; color: var(--text-muted); background: var(--surface2); padding: 12px; border-radius: 6px; overflow-x: auto; margin-top: 8px; border: 1px solid var(--border);">graph TD
+    Request[Approval Request Created] --&gt; Step1[Step 1: check Approver]
+    Step1 --&gt;|Approved| Step2[Step 2: check Next Approver]
+    Step1 --&gt;|Rejected| Rejected[Status: Rejected / Revision]
+    Step2 --&gt;|Approved| Finished[Status: Approved / Completed]
+    Step2 --&gt;|Rejected| Rejected
+</pre>
+        </div>
+      </div>
+<h3 class="sub-title">1. Submodul: Dynamic Step Configurator</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Pengaturan langkah-langkah persetujuan berdasarkan jenis modul transaksi.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Role-Based Approver</strong>: Persetujuan diserahkan kepada pengguna dengan Role tertentu (contoh: Tahap 2 disetujui oleh *Finance Manager*).</li>
+            <li><strong>User-Specific Approver</strong>: Persetujuan dikunci untuk satu pengguna spesifik (contoh: disetujui langsung oleh Direktur Utama).</li>
+            <li><strong>Supervisor Route</strong>: Sistem mencari <code>supervisor_id</code> dari karyawan pengaju di tabel <code>t_core_users</code> untuk persetujuan manajerial tahap pertama.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">2. Submodul: Approval Request Tracker</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Mesin pemantau status perjalanan transaksi yang sedang diajukan (*State Machine*).</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Menyimpan status global pengajuan (<code>pending</code>, <code>approved</code>, <code>rejected</code>, <code>canceled</code>).</li>
+            <li>Menyimpan petunjuk urutan langkah persetujuan aktif saat ini (<code>current_step</code>).</li>
+            <li>Aksi transisi: Menyetujui (*Approve*), Menolak (*Reject*), dan meminta Revisi (*Revise*).</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">3. Submodul: Approval Audit Log</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Rekaman jejak audit tidak terhapus (*immutable logs*) untuk merekam siapa, kapan, dan apa isi komentar persetujuan dari setiap tahapan.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>Pencatatan riwayat persetujuan lengkap dengan catatan komentar koreksi revisi jika ada penolakan.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h4 class="sub-sub-title">Skema Tabel Pendukung: <code>t_core_approvals*</code></h4>
+<pre style="font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; color: var(--text); margin-bottom: 20px;"><code>-- 1. Tabel Utama Pengajuan Otorisasi
+CREATE TABLE t_core_approvals (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    module VARCHAR(64) NOT NULL, -- e.g. &#039;moneta.ps_loan&#039;, &#039;moneta.ps_settlement&#039;
+    entity_id UUID NOT NULL, -- ID transaksi yang diajukan (contoh: Loan ID)
+    requester_id UUID NOT NULL REFERENCES t_core_users(id),
+    current_step INTEGER NOT NULL DEFAULT 1,
+    status VARCHAR(24) NOT NULL DEFAULT &#039;pending&#039;, -- &#039;pending&#039;, &#039;approved&#039;, &#039;rejected&#039;, &#039;canceled&#039;
+    description TEXT
+);
+
+-- 2. Tabel Master Konfigurasi Tahapan Persetujuan Modul
+CREATE TABLE t_core_approval_steps (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    module VARCHAR(64) NOT NULL, -- e.g. &#039;moneta.ps_loan&#039;
+    step_number INTEGER NOT NULL,
+    approver_role_id UUID REFERENCES t_cfg_roles(id) ON DELETE SET NULL,
+    approver_user_id UUID REFERENCES t_core_users(id) ON DELETE SET NULL,
+    use_supervisor BOOLEAN NOT NULL DEFAULT false
+);
+
+-- 3. Tabel Log Jejak Audit Persetujuan
+CREATE TABLE t_core_approval_logs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    approval_id UUID NOT NULL REFERENCES t_core_approvals(id) ON DELETE CASCADE,
+    step_number INTEGER NOT NULL,
+    approver_id UUID NOT NULL REFERENCES t_core_users(id),
+    action VARCHAR(24) NOT NULL, -- &#039;approve&#039;, &#039;reject&#039;, &#039;revise&#039;
+    &quot;comment&quot; TEXT
+);
+</code></pre>
+</div>
+</div>
+
+    <div class="section" id="section-10">
+      <div class="section-header">
+        <div class="section-num">08</div>
+        <h2 class="section-title">Modul 6: Helios (Ticketing System)</h2>
+      </div>
+      <div class="content">
+<p>Helios adalah sistem tiket bantuan (ticketing), notifikasi real-time, dan obrolan (chat) terpadu di Creative-X, yang memfasilitasi komunikasi internal antar-karyawan serta penanganan masalah operasional secara kolaboratif.</p>
+
+<h3 class="sub-title">1. Submodul: Tickets (Ticketing System)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Sistem manajemen tiket bantuan untuk melaporkan masalah operasional, kendala alat berat, atau kendala sistem.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Pembuatan tiket bantuan dengan prioritas (Low, Medium, High, Urgent).</li>
+            <li>Pelacakan status tiket (Open, In Progress, Resolved, Closed).</li>
+            <li>Penugasan tiket ke tim teknisi atau support department.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">2. Submodul: Notifications (Real-time Alerts)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Pusat notifikasi untuk mengirimkan peringalan real-time kepada pengguna.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Push notification real-time untuk pembaruan status transaksi atau tugas baru.</li>
+            <li>Pengiriman e-mail notifikasi otomatis untuk persetujuan yang tertunda.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">3. Submodul: Chats (Internal Collaboration)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Fitur obrolan langsung di dalam aplikasi untuk kolaborasi tim.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Ruang obrolan langsung (direct chat) antar-karyawan terkait tiket tertentu.</li>
+            <li>Pengiriman lampiran gambar atau dokumen pendukung langsung dari ruang obrolan.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 class="sub-sub-title">Skema Tabel Pendukung: <code>public.t_core_tickets</code> &amp; <code>public.t_core_ticket_chats</code></h4>
+<pre style="font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; color: var(--text); margin-bottom: 20px;"><code>-- 1. Tabel Tiket Bantuan (Helios Tickets)
+CREATE TABLE t_core_tickets (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    ticket_no VARCHAR(64) UNIQUE NOT NULL,
+    creator_id UUID NOT NULL REFERENCES t_core_users(id) ON DELETE CASCADE,
+    assignee_id UUID REFERENCES t_core_users(id) ON DELETE SET NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    category VARCHAR(64) NOT NULL, -- e.g. 'Equipment breakdown', 'System issue'
+    priority VARCHAR(32) NOT NULL DEFAULT 'Medium', -- 'Low', 'Medium', 'High', 'Urgent'
+    status VARCHAR(32) NOT NULL DEFAULT 'Open' -- 'Open', 'In Progress', 'Resolved', 'Closed'
+);
+
+-- 2. Tabel Obrolan Tiket (Helios Chats)
+CREATE TABLE t_core_ticket_chats (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    ticket_id UUID NOT NULL REFERENCES t_core_tickets(id) ON DELETE CASCADE,
+    sender_id UUID NOT NULL REFERENCES t_core_users(id) ON DELETE CASCADE,
+    message TEXT NOT NULL,
+    attachment_url VARCHAR(255)
+);
+</code></pre>
+      </div>
+    </div>
+
+    <div class="section" id="section-11">
+      <div class="section-header">
+        <div class="section-num">09</div>
+        <h2 class="section-title">Modul 7: Logs &amp; Audit Trails</h2>
+      </div>
+      <div class="content">
+<p>Modul penunjang integritas data yang merekam seluruh riwayat aktivitas teknis, modifikasi data fisik oleh pengguna, serta jejak integrasi dengan server eksternal dan logs notifikasi sistem.</p>
+
+<h3 class="sub-title">1. Submodul: User Activity Logs (Jejak Audit)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Sistem audit trail yang mencatat semua manipulasi data (Create, Update, Delete) yang dilakukan oleh pengguna pada semua tabel sistem.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Pencatatan kredensial lengkap: User ID, tipe aksi (CREATE, UPDATE, DELETE), modul terdampak, IP Address klien, dan User Agent browser.</li>
+            <li><strong>Payload Comparison</strong>: Menyimpan keadaan data sebelum dimutasi (<code>old_data</code> format JSONB) dan setelah dimutasi (<code>new_data</code> format JSONB).</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">2. Submodul: System Sync Logs (AOL Integrations)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Dasbor pemantauan real-time atas aktivitas pertukaran data API Accurate Online (AOL).</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>Rekaman waktu mulai-selesai sinkronisasi, durasi koneksi (detik), status sukses/gagal koneksi, nama modul terintegrasi, dan jumlah baris data yang sukses dimasukkan.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">3. Submodul: System Notification Logs (Log Notifikasi Sistem)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Mencatat notifikasi sistem yang didistribusikan ke masing-masing kotak masuk pengguna untuk kebutuhan log audit.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Pemuatan notifikasi real-time di bilah menu atas (Notification Drawer) dan status keterbacaan (unread, read).</li>
+            <li>Deep-Linking: Menyediakan tautan navigasi instan (link) yang mengarahkan pengguna langsung ke halaman detail transaksi terkait.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 class="sub-sub-title">Skema Tabel Pendukung: <code>application_logs.t_logs_*</code></h4>
+<pre style="font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; color: var(--text); margin-bottom: 20px;"><code>-- Buat schema application_logs jika belum ada
+CREATE SCHEMA IF NOT EXISTS application_logs;
+
+-- 1. Tabel Audit Trail Aktivitas Pengguna
+CREATE TABLE application_logs.t_logs_users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES t_core_users(id) ON DELETE SET NULL,
+    action VARCHAR(128) NOT NULL, -- 'CREATE', 'UPDATE', 'DELETE'
+    module VARCHAR(64) NOT NULL, -- e.g. 'Settings', 'Moneta', 'Ares'
+    entity_id UUID,
+    description TEXT,
+    old_data JSONB,
+    new_data JSONB,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- 2. Tabel Riwayat Sinkronisasi Akuntansi AOL
+CREATE TABLE application_logs.t_logs_system_syncs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    module VARCHAR(64) NOT NULL, -- e.g. 'AR-Inflow', 'Masterdata'
+    status VARCHAR(32) NOT NULL, -- 'success', 'failed'
+    message TEXT,
+    trigger_by VARCHAR(128) NOT NULL DEFAULT 'System',
+    started_at TIMESTAMP NOT NULL,
+    finished_at TIMESTAMP NOT NULL
+);
+
+-- 3. Tabel Log Pengiriman Email Penagihan Piutang
+CREATE TABLE application_logs.t_logs_ar_notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    invoice_id UUID NOT NULL,
+    invoice_no VARCHAR(64) NOT NULL,
+    customer_name VARCHAR(255) NOT NULL,
+    channel VARCHAR(32) NOT NULL, -- 'Email', 'WhatsApp'
+    recipient VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    status VARCHAR(32) NOT NULL,
+    error_message TEXT,
+    sent_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- 4. Tabel Notifikasi Sistem (Dipindahkan dari Helios)
+CREATE TABLE application_logs.t_logs_system_notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    user_id UUID NOT NULL REFERENCES t_core_users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    link VARCHAR(255),
+    module VARCHAR(64), -- e.g. 'moneta', 'ares'
+    status VARCHAR(24) NOT NULL DEFAULT 'unread' -- 'unread', 'read'
+);
+</code></pre>
+      </div>
+    </div>
+
+    <div class="section" id="section-12">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <h2 class="section-title">3. Kebutuhan Non-Fungsional (Non-Functional Requirements)</h2>
+      </div>
+      <div class="content">
+<p>Untuk menjamin kenyamanan dan keandalan operasional, sistem Creative-X harus memenuhi parameter performa dan keamanan berikut:</p>
+<h3 class="sub-title">4.1 Performa &amp; Kecepatan Respon (Performance &amp; SLA)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Response Time</strong>: Endpoint API backend harus merespon permintaan dalam waktu kurang dari 200ms untuk operasional normal, dan maksimal 1500ms untuk proses integrasi data eksternal (AOL sync).</li>
+            <li><strong>Caching</strong>: Menerapkan mekanisme caching data statis (seperti data provinsi, kota, dan menu navigasi) guna memperingan beban transaksi database PostgreSQL.</li>
+            <li><strong>Concurrent Users</strong>: Sistem dirancang untuk mampu melayani minimal 200 pengguna aktif secara bersamaan tanpa degradasi performa yang berarti.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">4.2 Ketersediaan &amp; Skalabilitas (Availability &amp; Reliability)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>SLA Uptime</strong>: Menjamin tingkat ketersediaan sistem (*Uptime*) minimal sebesar 99.9% setiap bulannya.</li>
+            <li><strong>Soft Delete</strong>: Semua tabel data transaksional wajib menerapkan konsep GORM Soft Delete (<code>deleted_at</code> timestamp) untuk menghindari hilangnya data secara permanen akibat kesalahan manusia.</li>
+            <li><strong>Database Backup</strong>: Melakukan pencadangan database (*database backup*) secara otomatis setiap hari pada pukul 01:00 WIB ke penyimpanan awan terenkripsi.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<h3 class="sub-title">4.3 Keamanan Informasi &amp; Privasi (Security &amp; Compliance)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li><strong>Transport Encryption</strong>: Seluruh lalu lintas data antara klien Next.js dan backend API Go wajib dilindungi enkripsi HTTPS (SSL/TLS 1.3).</li>
+            <li><strong>Data Masking</strong>: Semua kata sandi dalam database wajib di-hash menggunakan algoritma Bcrypt dengan cost factor minimal 10. API dilarang mengembalikan password hash dalam payload JSON.</li>
+            <li><strong>Sensitive Credentials</strong>: Kredensial eksternal seperti Client Secret AOL wajib disimpan dalam keadaan terenkripsi di tingkat database menggunakan kunci enkripsi AES-256 yang aman di environment server.</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+    <div class="section" id="section-13">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <h2 class="section-title">4. Kesimpulan &amp; Roadmap Masa Depan</h2>
+      </div>
+      <div class="content">
+<p>Platform <strong>Creative-X</strong> merupakan pondasi transformasi digital operasional PT Multicrane Perkasa yang solid. Melalui penggabungan arsitektur multi-database, modul <strong>Ares</strong> untuk operasional alat berat, modul <strong>Moneta</strong> untuk penagihan piutang dan kasbon terintegrasi Accurate Online, serta mesin persetujuan <strong>Approvals</strong> yang dinamis, perusahaan kini memiliki kendali operasional dan keuangan yang kokoh dalam satu genggaman antarmuka.</p>
+<h3 class="sub-title">Rencana Roadmap Pengembangan Selanjutnya:</h3>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">1. </strong> <strong>Fase 1 (Commercial Stable)</strong>: Implementasi penuh modul Pinjaman Sementara (PS), penyelarasan penomoran bill di Accurate Online secara berurutan, dan peluncuran pengingat tagihan piutang otomatis via SMTP Email.</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">2. </strong> <strong>Fase 2 (Mobile Optimization &amp; DFR/TSR Expansion)</strong>: Pengembangan aplikasi mobile berbasis Android/iOS secara native bagi operator dan mekanik di lapangan guna mempermudah pelaporan HM alat berat secara luring (offline first).</p>
+<p style="margin-left: 20px; text-indent: -20px; margin-bottom: 8px;"><strong style="color: var(--accent);">3. </strong> <strong>Fase 3 (Smart Analytics Integration)</strong>: Pemanfaatan algoritma machine learning pada modul Ares untuk memprediksi jadwal kerusakan unit alat berat (*Predictive Maintenance*) berdasarkan data historis HM dan TSR.</p>
+</div>
+</div>
+    </main>
+    
+    <!-- Corporate Footer -->
+    <footer class="doc-footer">
+      <div class="footer-brand">CREATIVE-X SYSTEM</div>
+      <div class="footer-note">© 2026 PT Multicrane Perkasa — All Rights Reserved. Proprietary & Confidential.</div>
+    </footer>
+    
+  </div>
+</body>
+</html>

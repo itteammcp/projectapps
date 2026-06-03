@@ -48,11 +48,11 @@ export default function Home() {
         {/* Orbit 1: Creative-X (inner) */}
         <div className="orbit orbit-creative-x">
           <div className="planet-container">
-            <a href="#" className="planet creative-x glass-card-system" onClick={(e) => e.preventDefault()}>
+            <Link href="/creative-x" className="planet creative-x glass-card-system">
               {/* <div className="card-icon">🏢</div> */}
               <h2>Creative-X</h2>
               <p>Super Apps</p>
-            </a>
+            </Link>
           </div>
         </div>
 

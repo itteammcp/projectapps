@@ -1,10 +1,10 @@
-import fs from "fs";
 import path from "path";
 import DeepSpaceViewer from "@/components/DeepSpaceViewer";
+import { loadHtmlWithIncludes } from "@/lib/utils";
 
 export default async function PrdHeraPage() {
   const filePath = path.join(process.cwd(), "_legacy_html", "prd-hera.html");
-  let content = fs.readFileSync(filePath, "utf-8");
+  let content = loadHtmlWithIncludes(filePath);
 
   // Extract body content
   const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
@@ -17,3 +17,4 @@ export default async function PrdHeraPage() {
 
   return <DeepSpaceViewer htmlContent={content} docTitle="HERA - Product Requirements Document" />;
 }
+

@@ -11,7 +11,15 @@ interface Section {
   content: string;
 }
 
-export default function DocumentAlignmentViewer({ htmlContent, docTitle }: { htmlContent: string, docTitle: string }) {
+export default function DocumentAlignmentViewer({ 
+  htmlContent, 
+  docTitle, 
+  backUrl = "/talos-wms" 
+}: { 
+  htmlContent: string, 
+  docTitle: string, 
+  backUrl?: string 
+}) {
   const [sections, setSections] = useState<Section[]>([]);
   const [activeSection, setActiveSection] = useState<number | null>(null);
   const [isClosing, setIsClosing] = useState(false);
@@ -115,7 +123,7 @@ export default function DocumentAlignmentViewer({ htmlContent, docTitle }: { htm
       ref={containerRef}
     >
       <Link 
-        href="/talos-wms" 
+        href={backUrl} 
         style={{ 
           position: 'fixed', 
           top: 'auto',

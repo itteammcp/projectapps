@@ -1,0 +1,92 @@
+<p>Modul Master Data mengelola registries data statis global wilayah administratif Indonesia serta salinan data entitas pelanggan yang disinkronkan secara berkala dari Accurate Online.</p>
+
+<h3 class="sub-title">1. Submodul: AOL Customer Sync</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Menyimpan data profil pelanggan yang diimpor dari database transaksi Accurate Online.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td><ul style="margin: 0; padding-left: 20px; list-style-type: square;">
+            <li>Sinkronisasi data identitas pelanggan: Nama pelanggan, kode pelanggan, email kantor, nomor HP, alamat surat-menyurat, NPWP, dan status wajib pajak PKP.</li>
+            <li>Credit Limit: Saldo batas kredit yang diizinkan untuk menyaring pengajuan pemesanan suku cadang atau sewa alat berat.</li>
+            <li>Analitik Keuangan Pelanggan: Menghitung total nilai piutang berjalan (*Total Outstanding*), piutang jatuh tempo (*Total Overdue*), serta jumlah faktur yang masih aktif (*Open Invoice Count*).</li>
+          </ul></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3 class="sub-title">2. Submodul: Geographical Registries (Provinces &amp; Cities)</h3>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Spesifikasi</th>
+        <th>Detail Deskripsi &amp; Fitur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deskripsi</strong></td>
+        <td>Menyimpan data provinsi dan kota/kabupaten resmi di Indonesia.</td>
+      </tr>
+      <tr>
+        <td><strong>Fitur Utama</strong></td>
+        <td>CRUD Provinsi dan Kota/Kabupaten untuk menstandarisasi pencatatan alamat instalasi mesin atau lokasi pengiriman unit di operasional Ares.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4 class="sub-sub-title">Skema Tabel Pendukung: <code>t_md_*</code></h4>
+<pre style="font-family: monospace; background: var(--surface2); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); overflow-x: auto; font-size: 13px; color: var(--text); margin-bottom: 20px;"><code>-- Tabel Pelanggan
+CREATE TABLE t_md_customers (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    aol_id VARCHAR(64) UNIQUE,
+    customer_no VARCHAR(64) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255),
+    phone VARCHAR(64),
+    address TEXT,
+    npwp VARCHAR(64),
+    category VARCHAR(64),
+    province_id VARCHAR(64),
+    city_id VARCHAR(64),
+    tax_office VARCHAR(255),
+    pkp BOOLEAN NOT NULL DEFAULT false,
+    credit_limit DECIMAL(20,2) NOT NULL DEFAULT 0,
+    sync_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Tabel Provinsi
+CREATE TABLE t_md_provinces (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    name VARCHAR(255) UNIQUE NOT NULL
+);
+
+-- Tabel Kota
+CREATE TABLE t_md_cities (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMP,
+    province_id UUID NOT NULL REFERENCES t_md_provinces(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL
+);
+</code></pre>
