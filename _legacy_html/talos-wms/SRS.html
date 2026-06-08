@@ -331,6 +331,38 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- 3.7 -->
+        <h3 class="sub-title">3.7 Modul Logi-X (Logistics Execution)</h3>
+        <h4 class="sub-sub-title">Behavior & Aturan</h4>
+        <table class="table-borderless">
+          <tbody>
+            <tr>
+              <td>Master Data Vendor & Rate</td>
+              <td>:</td>
+              <td>Mendefinisikan kurir (vendor), tarif pengiriman berdasarkan destinasi, berat, armada, dan penetapan <strong>SLA</strong> pengiriman serta SLA pengembalian DO.</td>
+            </tr>
+            <tr>
+              <td>Inbound Shipment</td>
+              <td>:</td>
+              <td>Memantau dan mencatat pengiriman impor dari principal ke gudang internal. Berkaitan langsung dengan Purchase Order/Receiving.</td>
+            </tr>
+            <tr>
+              <td>Outbound Shipment</td>
+              <td>:</td>
+              <td>Melacak distribusi pengiriman antar gudang dan domestik (customer). Wajib mencatat AWB, tanggal <em>Pickup</em>, dan estimasi/aktual <em>Delivery</em>.</td>
+            </tr>
+            <tr>
+              <td>SLA & Invoice Processing</td>
+              <td>:</td>
+              <td>Sistem mengkalkulasi efisiensi (selisih) dari standar tarif sistem dengan tagihan vendor. Keterlambatan pengembalian DO fisik dan Scan DO dipantau.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout callout-warn">
+          <span class="callout-icon">🛡️</span>
+          <div><strong>Validasi:</strong><br/>- Transaksi pengiriman outbound tidak bisa di-close apabila AWB dan status Delivery belum tervalidasi <em>Delivered</em>.<br/>- Sinkronisasi transaksi SO/PO (AOL Transactions) tidak bisa dilanjutkan jika vendor atau customer belum ter-mapping ke dalam Master Data Logi-X.</div>
+        </div>
       </div>
     </section>
 

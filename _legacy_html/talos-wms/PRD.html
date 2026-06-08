@@ -13,7 +13,9 @@
 </head>
 
 <body>
-  <a href="index.html" style="position: fixed; bottom: 24px; left: 24px; z-index: 9999; padding: 10px 20px; background: #6366f1; color: white; border-radius: 8px; text-decoration: none; font-family: 'Syne', sans-serif; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">&larr; Back</a>
+  <a href="index.html"
+    style="position: fixed; bottom: 24px; left: 24px; z-index: 9999; padding: 10px 20px; background: #6366f1; color: white; border-radius: 8px; text-decoration: none; font-family: 'Syne', sans-serif; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">&larr;
+    Back</a>
   <div class="page-wrap">
     <button id="theme-toggle-btn" class="theme-toggle">
       <span id="theme-icon">☀️</span>
@@ -97,7 +99,8 @@
         <p>Sistem ini dibangun untuk mendukung kebutuhan <strong>orang gudang, admin spare part,</strong> dan
           <strong>parts analyst</strong> dengan antarmuka yang intuitif, dukungan multi-warehouse, serta visualisasi
           tata letak gudang berbasis 2D. Seluruh transaksi stok dan mutasi barang yang terjadi di WMS akan otomatis
-          tersinkronisasi ke Accurate Online untuk menjaga konsistensi data keuangan dan inventori.</p>
+          tersinkronisasi ke Accurate Online untuk menjaga konsistensi data keuangan dan inventori.
+        </p>
         <div class="callout callout-info">
           <span class="callout-icon">ℹ</span>
           <div>Dokumen ini merupakan Product Requirements Document (PRD) versi awal yang akan diperbaharui secara
@@ -745,24 +748,85 @@
         <hr class="divider" />
 
         <!-- 5.10 Logi-X -->
-        <h3 class="sub-title">5.10 Fitur Logi-X</h3>
-        <p>Fitur Logi-X dirancang khusus untuk tim Logistic, berfungsi untuk melakukan inputan pengiriman barang dari principal (import-inbound shipment) ke gudang, dan dari gudang ke customer atau antar gudang (outbound shipment). Fitur ini juga terhubung langsung dengan Accurate Online di bagian pemesanan barang dan pengiriman barang.</p>
+        <h3 class="sub-title">5.10 Fitur Logi-X (Logistics Execution)</h3>
+        <p>Modul Logi-X dirancang khusus untuk tim logistik guna memfasilitasi proses end-to-end pendistribusian barang,
+          baik itu masuk (inbound) dari principal/impor ke gudang, maupun keluar (outbound) untuk pengiriman domestik ke
+          kustomer dan perpindahan antar gudang (transfer). Modul ini terintegrasi penuh dengan Accurate Online (AOL)
+          untuk menyinkronkan dokumen pemesanan (PO/SO) dan pengiriman.</p>
+
+        <h4 class="sub-sub-title">5.10.1 Manajemen Master Data Logistik</h4>
         <div class="feature-grid">
           <div class="feature-card blue">
-            <span class="card-icon">🚢</span>
-            <div class="card-title">Inbound Shipment</div>
-            <p class="card-desc">Mencatat dan memonitor pengiriman barang dari principal (import) hingga diterima di gudang dengan akurat.</p>
-          </div>
-          <div class="feature-card orange">
-            <span class="card-icon">🚚</span>
-            <div class="card-title">Outbound Shipment</div>
-            <p class="card-desc">Mengelola jadwal dan rute pengiriman barang dari gudang ke customer akhir maupun perpindahan antar gudang (transfer).</p>
+            <span class="card-icon">🏢</span>
+            <div class="card-title">Vendor & Kurir</div>
+            <p class="card-desc">Pengelolaan mitra kurir pengiriman yang terintegrasi dengan vendor AOL, lengkap dengan
+              tracking lead time SLA DO.</p>
           </div>
           <div class="feature-card teal">
-            <span class="card-icon">🔗</span>
-            <div class="card-title">Integrasi Accurate Online</div>
-            <p class="card-desc">Terhubung langsung dengan modul pemesanan barang (Purchase Order/Sales Order) dan pengiriman barang di Accurate Online.</p>
+            <span class="card-icon">📍</span>
+            <div class="card-title">Rate Destinations</div>
+            <p class="card-desc">Pemetaan area dan kota secara terpusat untuk menentukan titik asal (origin) dan titik
+              tujuan (destination) pengiriman.</p>
           </div>
+          <div class="feature-card orange">
+            <span class="card-icon">💰</span>
+            <div class="card-title">Vendor Rates</div>
+            <p class="card-desc">Konfigurasi tarif pengiriman berdasarkan berat, zona asal-tujuan, dan moda transportasi
+              (darat/laut/udara).</p>
+          </div>
+          <div class="feature-card purple">
+            <span class="card-icon">⏳</span>
+            <div class="card-title">DO Return SLAs</div>
+            <p class="card-desc">Pengaturan Service Level Agreement (SLA) untuk pengembalian dokumen Delivery Order (DO)
+              fisik/scan per rute perjalanan.</p>
+          </div>
+        </div>
+
+        <h4 class="sub-sub-title">5.10.2 Inbound Shipment</h4>
+        <p>Fokus utama untuk mengelola pengiriman dari principal (import) ke gudang internal. Memungkinkan pemantauan
+          dokumen import, lead time, hingga penyelesaian receiving di gudang. Proses ini terkait langsung dengan
+          transaksi Purchase Order/Penerimaan Barang di Accurate Online.</p>
+
+        <h4 class="sub-sub-title">5.10.3 Outbound Shipment</h4>
+        <p>Modul krusial untuk mengatur distribusi rute dari gudang ke kustomer akhir dan juga transfer antar gudang
+          secara domestik.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fitur</th>
+                <th>Deskripsi & Kemampuan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Shipment Tracking</strong></td>
+                <td>Pencatatan rincian AWB, vendor kurir terpilih, armada transportasi, serta pelacakan status
+                  keberangkatan hingga barang terkirim (delivered) menggunakan integrasi API atau update manual.</td>
+              </tr>
+              <tr>
+                <td><strong>Shipment Details</strong></td>
+                <td>Menangani spesifikasi berat barang (aktual & volumetrik), data kustomer tujuan, sinkronisasi DO dari
+                  AOL, dan upload/scan dokumen surat jalan (Delivery Order).</td>
+              </tr>
+              <tr>
+                <td><strong>Invoice Processing</strong></td>
+                <td>Penghitungan dan penerbitan faktur jasa logistik. Termasuk komparasi antara <i>vendor rate</i>
+                  standar sistem dengan nilai invoice aktual, menghasilkan data efisiensi finansial (efficiency
+                  percentage).</td>
+              </tr>
+              <tr>
+                <td><strong>SLA Monitoring</strong></td>
+                <td>Pemantauan pencapaian target waktu (SLA), dari kecepatan armada (Actual Delivery vs SLA) hingga
+                  percepatan pengembalian dokumen surat jalan (Ori DO dan Scan DO).</td>
+              </tr>
+              <tr>
+                <td><strong>Reporting</strong></td>
+                <td>Analisis performa pengiriman, perhitungan lead time pengiriman, dan audit log perubahan data (report
+                  logs) untuk melacak mutasi pada transaksi shipment.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>

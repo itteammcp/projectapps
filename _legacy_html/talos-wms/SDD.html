@@ -202,10 +202,8 @@
         <h2 class="section-title">Desain Database</h2>
       </div>
       <div class="content">
-        <p>Database utama menggunakan PostgreSQL dengan nama database <strong>hera</strong>. Semua tabel terkait WMS ini
-          akan disimpan di dalam <strong>schema talos</strong> (<code>talos.*</code>). Tabel global seperti
-          <code>users</code> dan <code>roles</code> berada di schema <code>public</code> dan tidak dicantumkan dalam
-          spesifikasi ini.</p>
+        <p>Database utama menggunakan PostgreSQL dengan nama database <strong>hera</strong>. Semua tabel operasional disimpan di dalam dua schema utama: <strong>schema talos</strong> (<code>talos.*</code>) untuk fungsionalitas WMS dan <strong>schema logix</strong> (<code>logix.*</code>) khusus untuk fungsi Logistik (Logi-X). Tabel global seperti <code>users</code> dan <code>roles</code> berada di schema <code>public</code>.
+        </p>
 
         <h3 class="sub-title">3.1 Kategori & Konvensi Penamaan Tabel</h3>
         <p>Seluruh tabel dalam schema talos menggunakan awalan <code>t_</code> yang diikuti dengan kode kategori modul.
@@ -527,11 +525,80 @@
           </table>
         </div>
 
+        <h3 class="sub-title">3.3 Skema Database Modul Logi-X (Schema: logix)</h3>
+        <p>Tabel-tabel berikut merupakan bagian dari modul pengiriman (Logistics Execution). <strong>Catatan Penting:</strong> Berbeda dengan WMS yang menggunakan schema <code>talos</code>, seluruh tabel Logi-X dipisahkan ke dalam schema mandiri yaitu <strong>schema logix</strong> (<code>logix.*</code>) di dalam database yang sama.</p>
+
+        <h4 class="sub-sub-title">1. Tabel Master Data Logistik</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Tabel</th>
+                <th>Keterangan Fungsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>t_md_vendors</code></td>
+                <td>Master data mitra vendor/kurir, menyimpan SLA scan DO dan referensi ke ID AOL.</td>
+              </tr>
+              <tr>
+                <td><code>t_md_rate_destinations</code></td>
+                <td>Data area / kota yang berfungsi sebagai titik origin dan destination.</td>
+              </tr>
+              <tr>
+                <td><code>t_md_vendor_rates</code></td>
+                <td>Tarif kurir berdasarkan origin, destination, transportasi, dan SLA pengiriman.</td>
+              </tr>
+              <tr>
+                <td><code>t_md_do_return_slas</code></td>
+                <td>SLA pengembalian fisik DO berdasarkan rute tujuan (origin to destination).</td>
+              </tr>
+              <tr>
+                <td><code>t_md_aol_transactions</code></td>
+                <td>Menyimpan riwayat dan data sinkronisasi transaksi SO/PO dari Accurate Online.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4 class="sub-sub-title">2. Tabel Transaksi Pengiriman (Shipments)</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Tabel</th>
+                <th>Keterangan Fungsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>t_dom_shipments</code></td>
+                <td>Header transaksi pengiriman (AWB, vendor, status, tanggal aktual, SLA metrics).</td>
+              </tr>
+              <tr>
+                <td><code>t_dom_shipment_details</code></td>
+                <td>Detail kustomer, berat aktual & volumetrik, referensi AOL, dan file DO scan.</td>
+              </tr>
+              <tr>
+                <td><code>t_dom_shipment_trackings</code></td>
+                <td>Riwayat pergerakan logistik (event tracking API atau input manual).</td>
+              </tr>
+              <tr>
+                <td><code>t_dom_shipment_invoices</code></td>
+                <td>Data tagihan invoice jasa logistik, beserta komparasi biaya dan efisiensi.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
         <div class="callout callout-info" style="margin-top:16px;">
           <span class="callout-icon">💡</span>
           <div><strong>Strategi Indexing:</strong> Indexing pada kolom <code>sn_code</code>, <code>code</code> (pada
             items), dan <code>bin_id</code> bersifat esensial untuk menjamin waktu query &lt; 2 detik pada saat scanning
-            massal.</div>
+            massal. Indexing pada tabel Logi-X difokuskan pada <code>awb_no</code>, <code>shipment_number</code>, dan
+            <code>transaction_number</code>.
+          </div>
         </div>
       </div>
     </section>
@@ -567,7 +634,8 @@
               <tr>
                 <td><strong>Error Handling</strong></td>
                 <td>Error terstruktur dengan kode bisnis yang spesifik (misal: <code>ERR_SN_DUPLICATE</code>,
-                  <code>ERR_BIN_FULL</code>).</td>
+                  <code>ERR_BIN_FULL</code>).
+                </td>
               </tr>
             </tbody>
           </table>
@@ -614,6 +682,22 @@
                 <td>Sync</td>
                 <td><code>POST /api/v1/sync/retry-failed</code></td>
                 <td>Manual trigger retry transaksi gagal dari DLQ</td>
+              </tr>
+              <tr>
+                <td>Logi-X Master Data</td>
+                <td><code>GET /api/v1/logix/vendor-rates</code><br /><code>POST /api/v1/logix/destinations</code></td>
+                <td>Mengelola tarif kurir, SLA DO, dan destinasi rute.</td>
+              </tr>
+              <tr>
+                <td>Logi-X Shipments</td>
+                <td><code>POST /api/v1/logix/shipments</code><br /><code>GET /api/v1/logix/shipments/:id/tracking</code>
+                </td>
+                <td>Operasional inbound/outbound, melacak status armada, dan upload DO.</td>
+              </tr>
+              <tr>
+                <td>Logi-X Invoices</td>
+                <td><code>GET /api/v1/logix/invoices</code><br /><code>POST /api/v1/logix/invoices/generate</code></td>
+                <td>Kalkulasi tagihan invoice kurir, perbandingan efisiensi tarif pengiriman.</td>
               </tr>
             </tbody>
           </table>
@@ -697,13 +781,15 @@
             <div class="card-title">Struktur Folder</div>
             <p class="card-desc">Menggunakan pendekatan fitur-driven (<code>app/dashboard</code>,
               <code>app/inventory</code>, <code>app/assembly</code>). Komponen modular disimpan di folder
-              <code>components/</code>.</p>
+              <code>components/</code>.
+            </p>
           </div>
           <div class="feature-card teal">
             <span class="card-icon">🧠</span>
             <div class="card-title">State Management</div>
             <p class="card-desc">State global untuk sesi user, notifikasi, dan active-tab dikelola oleh
-              <strong>Zustand</strong>. Caching request API menggunakan React Query atau SWR.</p>
+              <strong>Zustand</strong>. Caching request API menggunakan React Query atau SWR.
+            </p>
           </div>
           <div class="feature-card orange">
             <span class="card-icon">📱</span>
